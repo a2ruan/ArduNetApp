@@ -42,6 +42,6 @@
         android:layout_height="15dp"
         android:layout_gravity="center_vertical"
         android:layout_marginRight="10dp"
-        android:src="@mipmap/ic_enter" />
+        android:src="@drawable/ic_baseline_arrow_forward_ios_24" />
 
 </LinearLayout>

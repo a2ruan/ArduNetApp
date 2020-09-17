@@ -9,20 +9,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:paddingEnd="10dp"
         android:paddingStart="10dp"
-        android:textSize="14sp"
-        android:textStyle="bold" />
+        android:paddingEnd="10dp"
+        android:textSize="8sp"
+        android:textStyle="normal" />
 
     <TextView
         android:id="@+id/txt_mac"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:paddingEnd="10dp"
+        android:layout_marginTop="2dp"
         android:paddingStart="10dp"
-        android:textSize="14sp"
-        android:textStyle="bold" />
+        android:paddingEnd="10dp"
+        android:textSize="8sp"
+        android:textStyle="normal" />
 
     <ListView
         android:id="@+id/list_service"
@@ -30,6 +30,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
         android:divider="@android:color/darker_gray"
+        android:textColor="#000000"
         android:dividerHeight="0.5dp"
         android:paddingEnd="10dp"
         android:paddingStart="10dp"

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_device"
+        android:icon="@drawable/ic_baseline_bluetooth_connected_24"
+        android:title="@string/title_device" />
+
+    <item
+        android:id="@+id/navigation_graph"
+        android:icon="@drawable/ic_baseline_bar_chart_24"
+        android:title="@string/title_graph" />
+
+    <item
+        android:id="@+id/navigation_data"
+        android:icon="@drawable/ic_baseline_folder_open_24"
+        android:title="@string/title_data" />
+
+</menu>

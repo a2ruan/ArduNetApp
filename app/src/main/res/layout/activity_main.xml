@@ -67,6 +67,7 @@
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
             android:text="AutoConnect ?"
+            android:textColor="#7E7E7E"
             android:textSize="13sp" />
 
     </LinearLayout>
@@ -87,10 +88,15 @@
 
         <Button
             android:id="@+id/btn_scan"
+            style="@style/Widget.AppCompat.Button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="@string/start_scan" />
+            android:background="@color/colorPrimary"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:text="@string/start_scan"
+            android:textColor="@color/buttonText" />
 
         <ImageView
             android:id="@+id/img_loading"
@@ -99,7 +105,7 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="10dp"
-            android:src="@mipmap/ic_loading"
+            android:src="@drawable/ic_baseline_autorenew_24"
             android:visibility="invisible" />
 
     </RelativeLayout>
@@ -107,14 +113,12 @@
     <ListView
         android:id="@+id/list_device"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="274dp"
         android:layout_marginTop="10dp"
         android:divider="@android:color/darker_gray"
         android:dividerHeight="0.5dp"
-        android:paddingEnd="5dp"
         android:paddingStart="5dp"
-        android:scrollbars="none" />
-
-
+        android:paddingEnd="5dp"
+        android:scrollbars="none"/>
 </LinearLayout>
 

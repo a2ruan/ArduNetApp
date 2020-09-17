@@ -215,11 +215,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         boolean isAutoConnect = sw_auto.isChecked();
 
         BleScanRuleConfig scanRuleConfig = new BleScanRuleConfig.Builder()
-                .setServiceUuids(serviceUuids)      // 只扫描指定的服务的设备，可选
-                .setDeviceName(true, names)   // 只扫描指定广播名的设备，可选
-                .setDeviceMac(mac)                  // 只扫描指定mac的设备，可选
-                .setAutoConnect(isAutoConnect)      // 连接时的autoConnect参数，可选，默认false
-                .setScanTimeOut(10000)              // 扫描超时时间，可选，默认10秒
+                .setServiceUuids(serviceUuids)
+                .setDeviceName(true, names)
+                .setDeviceMac(mac)
+                .setAutoConnect(isAutoConnect)
+                .setScanTimeOut(10000)
                 .build();
         BleManager.getInstance().initScanRule(scanRuleConfig);
     }
