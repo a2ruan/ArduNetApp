@@ -28,6 +28,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="1dp"
+                android:textColor="@color/colorPrimary"
                 android:textSize="12sp" />
 
             <TextView
@@ -35,8 +36,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
+                android:textColor="@color/colorPrimary"
                 android:textSize="12sp" />
-
         </LinearLayout>
 
         <LinearLayout
@@ -52,20 +53,21 @@
                 android:id="@+id/txt_rssi"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="14sp" />
+                android:textSize="10sp" />
 
             <ImageView
-                android:layout_width="18dp"
-                android:layout_height="18dp"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
                 android:layout_marginLeft="5dp"
                 android:src="@drawable/ic_baseline_rssi_10" />
 
             <Button
                 android:id="@+id/btn_connect"
-                android:layout_width="50dp"
-                android:layout_height="wrap_content"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:layout_marginLeft="5dp"
-                android:text="@string/connect"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/ic_baseline_add_circle_outline_24"
                 android:textSize="12sp" />
 
         </LinearLayout>
@@ -79,20 +81,31 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/btn_disconnect"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:text="@string/disconnect"
-                android:textSize="8sp" />
+                android:id="@+id/btn_graph"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/ic_baseline_play_arrow_24"
+                android:textSize="0sp" />
 
             <Button
                 android:id="@+id/btn_detail"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:text="@string/enter"
-                android:textSize="8sp" />
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/ic_baseline_settings_24"
+                android:textSize="0sp" />
+
+            <Button
+                android:id="@+id/btn_disconnect"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/ic_baseline_delete_24"
+                android:textSize="0sp" />
 
         </LinearLayout>
 
