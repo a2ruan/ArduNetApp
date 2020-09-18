@@ -12,8 +12,7 @@
             android:id="@+id/img_blue"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_centerVertical="true"
-            android:src="@mipmap/ic_blue_remote" />
+            android:layout_centerVertical="true" />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -28,7 +27,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="1dp"
-                android:textColor="@color/colorPrimary"
+                android:textColor="#000000"
                 android:textSize="12sp" />
 
             <TextView
@@ -36,7 +35,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
-                android:textColor="@color/colorPrimary"
+                android:textColor="#000000"
                 android:textSize="12sp" />
         </LinearLayout>
 

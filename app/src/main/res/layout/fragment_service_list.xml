@@ -11,8 +11,8 @@
         android:layout_marginTop="10dp"
         android:paddingStart="10dp"
         android:paddingEnd="10dp"
-        android:textSize="8sp"
-        android:textStyle="normal" />
+        android:textSize="12sp"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/txt_mac"
@@ -21,8 +21,8 @@
         android:layout_marginTop="2dp"
         android:paddingStart="10dp"
         android:paddingEnd="10dp"
-        android:textSize="8sp"
-        android:textStyle="normal" />
+        android:textSize="12sp"
+        android:textStyle="bold" />
 
     <ListView
         android:id="@+id/list_service"

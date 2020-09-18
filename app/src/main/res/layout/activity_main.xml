@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
-        android:title="@string/app_name"
+        android:title="@string/title_device"
         app:titleTextColor="@android:color/white" />
 
     <LinearLayout
@@ -90,11 +90,11 @@
 
         <ImageView
             android:id="@+id/img_loading"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="10dp"
+            android:layout_marginRight="20dp"
             android:src="@drawable/ic_baseline_autorenew_24"
             android:visibility="invisible" />
 
@@ -103,8 +103,8 @@
             style="@style/Widget.AppCompat.Button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@color/colorPrimary"
             android:layout_centerInParent="true"
+            android:background="@drawable/primary_button"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:text="@string/start_scan"

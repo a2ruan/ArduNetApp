@@ -14,7 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity" android:label="Devices">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -22,6 +22,8 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".SecondActivity" android:label="Graph" android:exported="true"/>
+        <activity android:name=".ThirdActivity" android:label="Data" android:exported="true"/>
         <activity android:name=".operation.OperationActivity" />
 
     </application>
