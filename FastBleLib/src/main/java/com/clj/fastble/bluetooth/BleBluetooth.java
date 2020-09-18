@@ -37,7 +37,7 @@ import static android.bluetooth.BluetoothDevice.TRANSPORT_LE;
 
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
 public class BleBluetooth {
-
+    // hi
     private BleGattCallback bleGattCallback;
     private BleRssiCallback bleRssiCallback;
     private BleMtuChangedCallback bleMtuChangedCallback;
