@@ -47,9 +47,9 @@ public class ThirdActivity extends AppCompatActivity implements View.OnClickList
                 startActivity(intent2);
                 return true;
             case R.id.navigation_data:
-                return false;
+                return true;
             default:
-                return false;
+                return true;
         }
     }
 

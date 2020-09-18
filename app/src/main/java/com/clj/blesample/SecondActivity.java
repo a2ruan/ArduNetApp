@@ -84,13 +84,13 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
                 startActivity(intent1);
                 return true;
             case R.id.navigation_graph:
-                return false;
+                return true;
             case R.id.navigation_data:
                 Intent intent2 = new Intent(this,ThirdActivity.class);
                 startActivity(intent2);
                 return true;
             default:
-                return false;
+                return true;
         }
     }
 

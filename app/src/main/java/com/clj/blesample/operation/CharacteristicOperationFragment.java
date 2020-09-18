@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.clj.blesample.R;
 import com.clj.fastble.BleManager;
@@ -25,6 +26,7 @@ import com.clj.fastble.data.BleDevice;
 import com.clj.fastble.exception.BleException;
 import com.clj.fastble.utils.HexUtil;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -89,12 +91,31 @@ public class CharacteristicOperationFragment extends Fragment {
 
                                         @Override
                                         public void onReadSuccess(final byte[] data) {
+                                            // DATA TESTING
+                                            String str = new String(data, StandardCharsets.UTF_8);
+                                            String[] sensorData = unpackageBLEPacket(str);
+                                            showToast(str);
+
+                                            String outputToScreen = "";
+                                            for (int i = 0; i < sensorData.length; i++) {
+                                                outputToScreen = outputToScreen + "\n" + sensorData[i];
+                                            }
+                                            outputToScreen = outputToScreen + "\n" + "_________________________";
+                                            final String outputToScreen2 = outputToScreen;
                                             runOnUiThread(new Runnable() {
                                                 @Override
                                                 public void run() {
-                                                    addText(txt, HexUtil.formatHexString(data, true));
+                                                    addText(txt,outputToScreen2);
                                                 }
                                             });
+
+//                                            runOnUiThread(new Runnable() {
+//                                                @Override
+//                                                public void run() {
+//                                                    addText(txt, HexUtil.formatHexString(data, true));
+//                                                }
+//                                            });
+
                                         }
 
                                         @Override
@@ -342,5 +363,58 @@ public class CharacteristicOperationFragment extends Fragment {
         }
     }
 
+    private void showToast (String msg) {
+        Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
+    }
 
+    private static String hexToAscii(String hexStr) {
+        StringBuilder output = new StringBuilder("");
+
+        for (int i = 0; i < hexStr.length(); i += 2) {
+            String str = hexStr.substring(i, i + 2);
+            output.append((char) Integer.parseInt(str, 16));
+        }
+
+        return output.toString();
+    }
+
+    private static String getStringRepresentation(ArrayList<Character> list)
+    {
+        StringBuilder builder = new StringBuilder(list.size());
+        for(Character ch: list)
+        {
+            builder.append(ch);
+        }
+        return builder.toString();
+    }
+
+    private static String[] unpackageBLEPacket(String packetData)
+    {
+        String[] sensorData = packetData.split("/");
+        for (int i = 0;i < sensorData.length;i++)
+        {
+            String dataID = String.valueOf(sensorData[i].charAt(0));
+            switch(dataID) {
+                case "A":
+                    sensorData[i] = "Time = " + sensorData[i].substring(1) + "ms";
+                    break;
+                case "B":
+                    sensorData[i] = "Temp = " + sensorData[i].substring(1) + "deg C";
+                    break;
+                case "C":
+                    sensorData[i] = "RH = " + sensorData[i].substring(1) + "%";
+                    break;
+                case "D":
+                    sensorData[i] = "R = " + sensorData[i].substring(1) + "ohm";
+                    break;
+                case "E":
+                    sensorData[i] = "dR = " + sensorData[i].substring(1) + "ohm per s";
+                    break;
+                case "F":
+                    sensorData[i] = "Conc = " + sensorData[i].substring(1) + "ppm";
+                    break;
+            }
+        }
+        return sensorData;
+    }
 }

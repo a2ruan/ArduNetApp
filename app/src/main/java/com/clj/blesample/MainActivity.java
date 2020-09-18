@@ -89,6 +89,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         overridePendingTransition(R.anim.fadein, R.anim.fadeout);
         navigationView = (BottomNavigationView) findViewById(R.id.nav_view);
         navigationView.setOnNavigationItemSelectedListener(this);
+
     }
 
     @Override
@@ -100,8 +101,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        BleManager.getInstance().disconnectAllDevice();
-        BleManager.getInstance().destroy();
+        //BleManager.getInstance().disconnectAllDevice();
+        //BleManager.getInstance().destroy();
     }
 
     @Override
@@ -131,7 +132,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.navigation_device:
-                return false;
+                return true;
             case R.id.navigation_graph:
                 Intent intent1 = new Intent(this,SecondActivity.class);
                 startActivity(intent1);
@@ -141,7 +142,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(intent2);
                 return true;
             default:
-                return false;
+                return true;
         }
     }
 
@@ -447,5 +448,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
     }
+
+
 
 }
