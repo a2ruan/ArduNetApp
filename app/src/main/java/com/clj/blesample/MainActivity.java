@@ -84,9 +84,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .setConnectOverTime(20000)
                 .setOperateTimeout(5000);
 
-        // Menu Initialization
+        //Override Transition Animation
         overridePendingTransition(R.anim.fadein, R.anim.fadeout);
 
+        // Bottom Menu Initialization
         BottomNavigationView bottomNav = (BottomNavigationView) findViewById(R.id.nav_view);
         bottomNav.setOnNavigationItemSelectedListener(navListener);
 
@@ -460,7 +461,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
     }
-
-
 
 }
