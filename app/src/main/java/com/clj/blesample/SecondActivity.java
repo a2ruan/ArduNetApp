@@ -63,7 +63,7 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
 
         // Menu Initialization
         overridePendingTransition(R.anim.fadein, R.anim.fadeout);
-        navigationView = (BottomNavigationView) findViewById(R.id.nav_view);
+        navigationView = (BottomNavigationView) findViewById(R.id.nav_view2);
         navigationView.setOnNavigationItemSelectedListener(this);
     }
 

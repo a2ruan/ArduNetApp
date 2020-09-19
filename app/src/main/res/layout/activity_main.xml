@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -19,6 +19,7 @@
         android:id="@+id/layout_setting"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/toolbar"
         android:background="#eeeeee"
         android:orientation="vertical"
         android:padding="20dp">
@@ -77,75 +78,75 @@
         android:id="@+id/txt_setting"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
+        android:layout_below="@id/layout_setting"
+        android:layout_centerInParent="true"
         android:background="#eeeeee"
+        android:layout_marginBottom="10dp"
         android:padding="10dp" />
 
-    <RelativeLayout
+    <FrameLayout
+        android:id="@+id/fragment_container"
         android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_below="@id/txt_setting"
+        android:layout_marginBottom="10dp" />
+
+    <ImageView
+        android:id="@+id/img_loading"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_below="@id/fragment_container"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="46dp"
+        android:layout_marginTop="10dp"
+        android:src="@drawable/ic_baseline_autorenew_24"
+        android:visibility="invisible" />
+
+    <Button
+        android:id="@+id/btn_scan"
+        style="@style/Widget.AppCompat.Button"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="10dp"
-        android:paddingBottom="0dp">
-
-        <ImageView
-            android:id="@+id/img_loading"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="20dp"
-            android:src="@drawable/ic_baseline_autorenew_24"
-            android:visibility="invisible" />
-
-        <Button
-            android:id="@+id/btn_scan"
-            style="@style/Widget.AppCompat.Button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:background="@drawable/primary_button"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:text="@string/start_scan"
-            android:textColor="@color/buttonText" />
-    </RelativeLayout>
+        android:layout_below="@id/fragment_container"
+        android:layout_centerInParent="true"
+        android:background="@drawable/primary_button"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:text="@string/start_scan"
+        android:textColor="@color/buttonText" />
 
 
-    <RelativeLayout
+
+    <ListView
+        android:id="@+id/list_device"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingTop="0dp"
-        android:paddingBottom="0dp">
+        android:layout_height="match_parent"
+        android:layout_marginTop="10dp"
+        android:layout_below="@id/btn_scan"
+        android:divider="@android:color/darker_gray"
+        android:dividerHeight="0.5dp"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp"
+        android:layout_marginBottom="60dp"
+        android:scrollbars="none"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintVertical_bias="0.0" >
+    </ListView>
 
-        <ListView
-            android:id="@+id/list_device"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="10dp"
-            android:divider="@android:color/darker_gray"
-            android:dividerHeight="0.5dp"
-            android:paddingStart="5dp"
-            android:paddingEnd="5dp"
-            android:layout_marginBottom="60dp"
-            android:scrollbars="none"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintVertical_bias="0.0" >
-        </ListView>
+    <android.support.design.widget.BottomNavigationView
+        android:id="@+id/nav_view"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="?android:attr/windowBackground"
+        android:layout_marginBottom="0dp"
+        android:layout_marginTop="0dp"
+        app:layout_constraintHorizontal_bias="1.0"
+        android:layout_alignParentBottom="true"
+        app:layout_constraintVertical_bias="0.0"
+        app:menu="@menu/bottom_nav_menu" >
+    </android.support.design.widget.BottomNavigationView>
 
-        <android.support.design.widget.BottomNavigationView
-            android:id="@+id/nav_view"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:background="#F8F8F8"
-            android:layout_marginBottom="0dp"
-            android:layout_marginTop="0dp"
-            app:layout_constraintHorizontal_bias="1.0"
-            android:layout_alignParentBottom="true"
-            app:layout_constraintVertical_bias="0.0"
-            app:menu="@menu/bottom_nav_menu" >
-        </android.support.design.widget.BottomNavigationView>
-    </RelativeLayout>
-</LinearLayout>
+
+
+</RelativeLayout>
 

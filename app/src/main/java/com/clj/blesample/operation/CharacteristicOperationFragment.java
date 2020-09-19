@@ -101,6 +101,9 @@ public class CharacteristicOperationFragment extends Fragment {
                                                 outputToScreen = outputToScreen + "\n" + sensorData[i];
                                             }
                                             outputToScreen = outputToScreen + "\n" + "_________________________";
+
+
+
                                             final String outputToScreen2 = outputToScreen;
                                             runOnUiThread(new Runnable() {
                                                 @Override

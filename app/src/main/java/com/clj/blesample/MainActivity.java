@@ -15,8 +15,8 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
-import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -32,7 +32,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.PopupMenu;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -53,7 +52,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, BottomNavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final int REQUEST_CODE_OPEN_GPS = 1;
@@ -87,8 +86,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         // Menu Initialization
         overridePendingTransition(R.anim.fadein, R.anim.fadeout);
-        navigationView = (BottomNavigationView) findViewById(R.id.nav_view);
-        navigationView.setOnNavigationItemSelectedListener(this);
+
+        BottomNavigationView bottomNav = (BottomNavigationView) findViewById(R.id.nav_view);
+        bottomNav.setOnNavigationItemSelectedListener(navListener);
+
+        //I added this if statement to keep the selected fragment when rotating the device
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                    new device_fragment()).commit();
+        }
 
     }
 
@@ -127,24 +133,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
         }
     }
-
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.navigation_device:
-                return true;
-            case R.id.navigation_graph:
-                Intent intent1 = new Intent(this,SecondActivity.class);
-                startActivity(intent1);
-                return true;
-            case R.id.navigation_data:
-                Intent intent2 = new Intent(this,ThirdActivity.class);
-                startActivity(intent2);
-                return true;
-            default:
-                return true;
+    private BottomNavigationView.OnNavigationItemSelectedListener navListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            Fragment selectedFragment = null;
+            switch (item.getItemId()) {
+                case R.id.navigation_device:
+                    selectedFragment = new device_fragment();
+                    break;
+                case R.id.navigation_graph:
+                    //Intent intent1 = new Intent(this, SecondActivity.class);
+                    //startActivity(intent1);
+                    selectedFragment = new graph_fragment();
+                    break;
+                case R.id.navigation_data:
+                    //Intent intent2 = new Intent(this, ThirdActivity.class);
+                    //startActivity(intent2);
+                    selectedFragment = new data_fragment();
+                    break;
+            }
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                    selectedFragment).commit();
+            return true;
         }
-    }
+    };
 
     private void showToast (String msg) {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();

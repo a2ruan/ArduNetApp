@@ -22,7 +22,7 @@ public class ThirdActivity extends AppCompatActivity implements View.OnClickList
 
         // Menu Initialization
         overridePendingTransition(R.anim.fadein, R.anim.fadeout);
-        navigationView = (BottomNavigationView) findViewById(R.id.nav_view);
+        navigationView = (BottomNavigationView) findViewById(R.id.nav_view3);
         navigationView.setOnNavigationItemSelectedListener(this);
     }
 
