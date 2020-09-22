@@ -22,8 +22,6 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".SecondActivity" android:label="Graph" android:exported="true"/>
-        <activity android:name=".ThirdActivity" android:label="Data" android:exported="true"/>
         <activity android:name=".operation.OperationActivity" />
 
     </application>

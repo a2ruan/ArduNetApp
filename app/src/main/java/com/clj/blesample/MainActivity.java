@@ -47,6 +47,8 @@ import com.clj.fastble.callback.BleScanCallback;
 import com.clj.fastble.data.BleDevice;
 import com.clj.fastble.exception.BleException;
 import com.clj.fastble.scan.BleScanRuleConfig;
+import com.github.mikephil.charting.listener.OnChartGestureListener;
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -138,18 +140,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             Fragment selectedFragment = null;
+            Toolbar toolbarRef = findViewById(R.id.toolbar);
             switch (item.getItemId()) {
                 case R.id.navigation_device:
                     selectedFragment = new device_fragment();
+                    txt_setting.setText(getString(R.string.expand_search_settings));
+                    toolbarRef.setTitle(R.string.title_device);
+                    btn_scan.setVisibility(View.VISIBLE);
+                    txt_setting.setVisibility(View.VISIBLE);
                     break;
                 case R.id.navigation_graph:
                     //Intent intent1 = new Intent(this, SecondActivity.class);
                     //startActivity(intent1);
+                    toolbarRef.setTitle(R.string.title_graph);
+                    layout_setting.setVisibility(View.GONE);
+                    btn_scan.setVisibility(View.GONE);
+                    txt_setting.setVisibility(View.GONE);
+                    img_loading.setVisibility(View.GONE);
                     selectedFragment = new graph_fragment();
                     break;
                 case R.id.navigation_data:
                     //Intent intent2 = new Intent(this, ThirdActivity.class);
                     //startActivity(intent2);
+                    toolbarRef.setTitle(R.string.title_data);
+                    layout_setting.setVisibility(View.GONE);
+                    btn_scan.setVisibility(View.GONE);
+                    txt_setting.setVisibility(View.GONE);
+                    img_loading.setVisibility(View.GONE);
                     selectedFragment = new data_fragment();
                     break;
             }
