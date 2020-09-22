@@ -17,6 +17,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -152,22 +153,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 case R.id.navigation_graph:
                     //Intent intent1 = new Intent(this, SecondActivity.class);
                     //startActivity(intent1);
+                    selectedFragment = new graph_fragment();
                     toolbarRef.setTitle(R.string.title_graph);
                     layout_setting.setVisibility(View.GONE);
                     btn_scan.setVisibility(View.GONE);
                     txt_setting.setVisibility(View.GONE);
                     img_loading.setVisibility(View.GONE);
-                    selectedFragment = new graph_fragment();
                     break;
                 case R.id.navigation_data:
                     //Intent intent2 = new Intent(this, ThirdActivity.class);
                     //startActivity(intent2);
+                    selectedFragment = new data_fragment();
                     toolbarRef.setTitle(R.string.title_data);
                     layout_setting.setVisibility(View.GONE);
                     btn_scan.setVisibility(View.GONE);
                     txt_setting.setVisibility(View.GONE);
                     img_loading.setVisibility(View.GONE);
-                    selectedFragment = new data_fragment();
                     break;
             }
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,

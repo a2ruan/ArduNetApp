@@ -1,67 +1,92 @@
 package com.clj.blesample;
 
-import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 
-import androidx.annotation.NonNull;
-
-import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
-import com.github.mikephil.charting.listener.ChartTouchListener;
-import com.github.mikephil.charting.listener.OnChartGestureListener;
-import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 
 import java.util.ArrayList;
 
 public class graph_fragment extends Fragment {
 
-    private LineChart mChart;
+    private LineChart chart1;
+    private LineChart chart2;
+    private LineChart chart3;
+    private LineChart chart4;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_graph, container, false);
+        chart1 = initChart(chart1,v,R.id.chart1);
+        chart2 = initChart(chart2,v,R.id.chart2);
+        chart3 = initChart(chart3,v,R.id.chart3);
+        chart4 = initChart(chart4,v,R.id.chart4);
+        return v;
+    }
 
-        mChart = (LineChart) v.findViewById(R.id.graph_data);
-//        mChart.setOnChartGestureListener(MainActivity.this);
-//        mChart.setOnClickListener(MainActivity.this);
+    private LineChart initChart(LineChart chartTemp, View viewTemp,int viewID) {
+        // Find Chart by ID
+        chartTemp = (LineChart) viewTemp.findViewById(viewID);
 
-        mChart.setDragEnabled(true);
-        mChart.setScaleEnabled(true);
+        // Formatting
+        chartTemp.getDescription().setEnabled(true);
+        chartTemp.getDescription().setText("");
+        chartTemp.setDragEnabled(true);
+        chartTemp.setScaleEnabled(true);
+        chartTemp.setPinchZoom(true);
+        //chartTemp.setBorderColor(R.color.chartBorder);
+        chartTemp.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
+        chartTemp.getAxisLeft().setTextColor(R.color.colorTextPrimary); // left y-axis
+        chartTemp.getAxisRight().setTextColor(R.color.colorTextPrimary); // right y-axis
+        chartTemp.getXAxis().setTextColor(R.color.colorTextPrimary);
 
+        chartTemp.getXAxis().setTextSize(10);
+        chartTemp.getAxisLeft().setTextSize(10);
+
+        chartTemp.getAxisRight().setEnabled(false);
+        chartTemp.getLegend().setTextColor(R.color.colorTextPrimary);
+        chartTemp.getLegend().setForm(Legend.LegendForm.CIRCLE);
+
+        Legend legend = chartTemp.getLegend();
+        legend.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
+        legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
+        legend.setOrientation(Legend.LegendOrientation.HORIZONTAL);
+        legend.setDrawInside(false);
+
+
+        // Temporary Data
         ArrayList<Entry> yValues = new ArrayList<>();
+        yValues.add(new Entry(0, 1035f));
+        yValues.add(new Entry(1, 1060f));
+        yValues.add(new Entry(2, 1070f));
+        yValues.add(new Entry(3, 1076f));
+        yValues.add(new Entry(4, 1080f));
+        yValues.add(new Entry(5, 1030f));
 
-        yValues.add(new Entry(0, 60f));
-        yValues.add(new Entry(1, 50f));
-        yValues.add(new Entry(2, 40f));
-        yValues.add(new Entry(3, 60f));
-        yValues.add(new Entry(4, 70f));
-        yValues.add(new Entry(5, 78f));
-
-        LineDataSet set1 = new LineDataSet(yValues,"Resistance");
-
+        LineDataSet set1 = new LineDataSet(yValues,"Gas Sensor 1");
+        set1.setCircleRadius(1);
         set1.setFillAlpha(110);
         ArrayList<ILineDataSet> dataSets = new ArrayList<>();
         dataSets.add(set1);
 
         LineData data = new LineData(dataSets);
-        mChart.setData(data);
-        return v;
-    }
+        chartTemp.setData(data);
 
+        return chartTemp;
+
+
+    }
 
 }

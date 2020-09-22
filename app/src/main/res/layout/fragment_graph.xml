@@ -4,16 +4,89 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".graph_fragment">
-
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
     <!-- TODO: Update blank fragment layout -->
-    <com.github.mikephil.charting.charts.LineChart
-        android:id="@+id/graph_data"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="70dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginLeft="10dp"
-        android:textColor="@color/colorTextPrimary" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp">
 
+            <com.github.mikephil.charting.charts.LineChart
+                android:id="@+id/chart1"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/chartHeight1"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginLeft="10dp"
+                android:textColor="@color/colorTextPrimary" >
+            </com.github.mikephil.charting.charts.LineChart>
+            <TextView
+                android:id="@+id/XLabel1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/labelTextSize"
+                android:layout_below="@id/chart1"
+                android:layout_centerHorizontal="true"
+                android:text="Time(s)" />
+
+            <com.github.mikephil.charting.charts.LineChart
+                android:id="@+id/chart2"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/chartHeight1"
+                android:layout_marginTop="20dp"
+                android:layout_below="@id/XLabel1"
+                android:layout_marginRight="10dp"
+                android:layout_marginLeft="10dp"
+                android:textColor="@color/colorTextPrimary" />
+            <TextView
+                android:id="@+id/XLabel2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/labelTextSize"
+                android:layout_below="@id/chart2"
+                android:layout_centerHorizontal="true"
+                android:text="Time(s)" />
+
+            <com.github.mikephil.charting.charts.LineChart
+                android:id="@+id/chart3"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/chartHeight1"
+                android:layout_marginTop="20dp"
+                android:layout_below="@id/XLabel2"
+                android:layout_marginRight="10dp"
+                android:layout_marginLeft="10dp"
+                android:textColor="@color/colorTextPrimary" />
+            <TextView
+                android:id="@+id/XLabel3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/labelTextSize"
+                android:layout_below="@id/chart3"
+                android:layout_centerHorizontal="true"
+                android:text="Time(s)" />
+
+            <com.github.mikephil.charting.charts.LineChart
+                android:id="@+id/chart4"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/chartHeight1"
+                android:layout_marginTop="20dp"
+                android:layout_below="@id/XLabel3"
+                android:layout_marginBottom="70dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginLeft="10dp"
+                android:textColor="@color/colorTextPrimary" />
+            <TextView
+                android:id="@+id/XLabel4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/labelTextSize"
+                android:layout_below="@id/chart4"
+                android:layout_centerHorizontal="true"
+                android:text="Time(s)" />
+
+        </RelativeLayout>
+    </ScrollView>
 </RelativeLayout>

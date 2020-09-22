@@ -5,4 +5,8 @@
     <color name="colorAccent">#00a2ed</color>
     <color name="colorTextPrimary">#000000</color>
     <color name="buttonText">#ffffff</color>
+
+    // CHART COLORS
+    <color name="chartBackground">#ffffff</color>
+    <color name="chartBorder">#000000</color>
 </resources>
