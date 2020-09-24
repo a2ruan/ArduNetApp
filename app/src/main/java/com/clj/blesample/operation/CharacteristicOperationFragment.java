@@ -59,9 +59,11 @@ public class CharacteristicOperationFragment extends Fragment {
         final int charaProp = ((OperationActivity) getActivity()).getCharaProp();
         String child = characteristic.getUuid().toString() + String.valueOf(charaProp);
 
+        // RESET ALL CONTAINERS
         for (int i = 0; i < layout_container.getChildCount(); i++) {
             layout_container.getChildAt(i).setVisibility(View.GONE);
         }
+
         if (childList.contains(child)) {
             layout_container.findViewWithTag(bleDevice.getKey() + characteristic.getUuid().toString() + charaProp).setVisibility(View.VISIBLE);
         } else {

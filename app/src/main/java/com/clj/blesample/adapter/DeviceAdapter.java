@@ -18,6 +18,7 @@ import com.clj.fastble.data.BleDevice;
 import java.util.ArrayList;
 import java.util.List;
 
+// This class is used to define all scanning find operations for BLE devices
 public class DeviceAdapter extends BaseAdapter {
 
     private Context context;
@@ -100,11 +101,13 @@ public class DeviceAdapter extends BaseAdapter {
             holder.btn_disconnect = (Button) convertView.findViewById(R.id.btn_disconnect);
             holder.btn_connect = (Button) convertView.findViewById(R.id.btn_connect);
             holder.btn_detail = (Button) convertView.findViewById(R.id.btn_detail);
+            holder.btn_graph = (Button) convertView.findViewById(R.id.btn_graph);
         }
 
         final BleDevice bleDevice = getItem(position);
         if (bleDevice != null) {
             boolean isConnected = BleManager.getInstance().isConnected(bleDevice);
+            int getGraphStatus = bleDevice.getGraphStatus();
             String name = bleDevice.getName();
             String mac = bleDevice.getMac();
             int rssi = bleDevice.getRssi();
@@ -113,14 +116,21 @@ public class DeviceAdapter extends BaseAdapter {
             holder.txt_rssi.setText(String.valueOf(rssi));
             if (isConnected) {
                 holder.img_blue.setImageResource(R.drawable.ic_baseline_bluetooth_connected_24);
-                holder.txt_name.setTextColor(Color.rgb(0,162,237));
-                holder.txt_mac.setTextColor(Color.rgb(0,162,237));
+                holder.txt_name.setTextColor(Color.rgb(0, 162, 237));
+                holder.txt_mac.setTextColor(Color.rgb(0, 162, 237));
                 holder.layout_idle.setVisibility(View.GONE);
                 holder.layout_connected.setVisibility(View.VISIBLE);
-            } else {
+                if (getGraphStatus == 1) {
+                    holder.btn_graph.setBackgroundResource(R.drawable.ic_baseline_pause_24);
+                }
+                else {
+                    holder.btn_graph.setBackgroundResource(R.drawable.ic_baseline_play_arrow_24);
+                }
+            }
+            else {
                 holder.img_blue.setImageResource(R.drawable.ic_baseline_bluetooth_searching_24);
-                holder.txt_name.setTextColor(Color.rgb(0,0,0));
-                holder.txt_mac.setTextColor(Color.rgb(0,0,0));
+                holder.txt_name.setTextColor(Color.rgb(115,115,115));
+                holder.txt_mac.setTextColor(Color.rgb(115,115,115));
                 holder.layout_idle.setVisibility(View.VISIBLE);
                 holder.layout_connected.setVisibility(View.GONE);
             }
@@ -153,6 +163,15 @@ public class DeviceAdapter extends BaseAdapter {
             }
         });
 
+        holder.btn_graph.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mListener != null) {
+                    mListener.onGraph(bleDevice);
+                }
+            }
+        });
+
         return convertView;
     }
 
@@ -166,6 +185,7 @@ public class DeviceAdapter extends BaseAdapter {
         Button btn_disconnect;
         Button btn_connect;
         Button btn_detail;
+        Button btn_graph;
     }
 
     public interface OnDeviceClickListener {
@@ -174,6 +194,8 @@ public class DeviceAdapter extends BaseAdapter {
         void onDisConnect(BleDevice bleDevice);
 
         void onDetail(BleDevice bleDevice);
+
+        void onGraph(BleDevice bleDevice);
     }
 
     private OnDeviceClickListener mListener;

@@ -13,8 +13,12 @@ public class BleDevice implements Parcelable {
     private int mRssi;
     private long mTimestampNanos;
 
+    // CUSTOM VARIABLE TO INDICATE IF GRAPHING IS DESIRED
+    private int graphStatus;
+
     public BleDevice(BluetoothDevice device) {
         mDevice = device;
+        graphStatus = 0;
     }
 
     public BleDevice(BluetoothDevice device, int rssi, byte[] scanRecord, long timestampNanos) {
@@ -22,6 +26,7 @@ public class BleDevice implements Parcelable {
         mScanRecord = scanRecord;
         mRssi = rssi;
         mTimestampNanos = timestampNanos;
+        graphStatus = 0;
     }
 
     protected BleDevice(Parcel in) {
@@ -29,6 +34,7 @@ public class BleDevice implements Parcelable {
         mScanRecord = in.createByteArray();
         mRssi = in.readInt();
         mTimestampNanos = in.readLong();
+        graphStatus = in.readInt();
     }
 
     @Override
@@ -37,6 +43,7 @@ public class BleDevice implements Parcelable {
         dest.writeByteArray(mScanRecord);
         dest.writeInt(mRssi);
         dest.writeLong(mTimestampNanos);
+        dest.writeInt(graphStatus);
     }
 
     @Override
@@ -74,6 +81,16 @@ public class BleDevice implements Parcelable {
         return "";
     }
 
+    public int getGraphStatus() {
+        if (mDevice != null)
+            return this.graphStatus;
+        return -1;
+    }
+
+    public void setGraphStatus(int graphStatus) {
+        this.graphStatus = graphStatus;
+    }
+
     public BluetoothDevice getDevice() {
         return mDevice;
     }
@@ -97,6 +114,7 @@ public class BleDevice implements Parcelable {
     public void setRssi(int rssi) {
         this.mRssi = rssi;
     }
+
 
     public long getTimestampNanos() {
         return mTimestampNanos;

@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.clj.fastble.BleManager;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Legend;
@@ -33,6 +34,9 @@ public class graph_fragment extends Fragment {
         chart2 = initChart(chart2,v,R.id.chart2);
         chart3 = initChart(chart3,v,R.id.chart3);
         chart4 = initChart(chart4,v,R.id.chart4);
+
+        BleManager.getInstance().getAllConnectedDevice();
+
         return v;
     }
 
@@ -59,6 +63,7 @@ public class graph_fragment extends Fragment {
         chartTemp.getLegend().setTextColor(R.color.colorTextPrimary);
         chartTemp.getLegend().setForm(Legend.LegendForm.CIRCLE);
 
+
         Legend legend = chartTemp.getLegend();
         legend.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
         legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
@@ -78,8 +83,26 @@ public class graph_fragment extends Fragment {
         LineDataSet set1 = new LineDataSet(yValues,"Gas Sensor 1");
         set1.setCircleRadius(1);
         set1.setFillAlpha(110);
+        set1.setDrawFilled(true);
         ArrayList<ILineDataSet> dataSets = new ArrayList<>();
         dataSets.add(set1);
+        //LineData data = new LineData(dataSets);
+        //chartTemp.setData(data);
+
+        // Temp Data 2
+        ArrayList<Entry> yValues2 = new ArrayList<>();
+        yValues2.add(new Entry(0, 1000f));
+        yValues2.add(new Entry(1, 1020f));
+        yValues2.add(new Entry(2, 1040f));
+        yValues2.add(new Entry(3, 1026f));
+        yValues2.add(new Entry(4, 1010f));
+        yValues2.add(new Entry(5, 1090f));
+
+        LineDataSet set2 = new LineDataSet(yValues2,"Gas Sensor 2");
+        set2.setCircleRadius(1);
+        set2.setFillAlpha(110);
+        set2.setDrawFilled(true);
+        dataSets.add(set2);
 
         LineData data = new LineData(dataSets);
         chartTemp.setData(data);

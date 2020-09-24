@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.Toast;
 
 import com.clj.blesample.R;
 import com.clj.blesample.comm.Observer;
@@ -173,5 +174,8 @@ public class OperationActivity extends AppCompatActivity implements Observer {
         this.charaProp = charaProp;
     }
 
+    private void showToast (String msg) {
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+    }
 
 }

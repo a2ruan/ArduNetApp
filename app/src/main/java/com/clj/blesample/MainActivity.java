@@ -100,6 +100,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     new device_fragment()).commit();
         }
 
+        // FILTER BY DEFAULT "GAS SENSOR"
+        et_name = (EditText) findViewById(R.id.et_name);
+        et_name.setText("Gas Sensor");
     }
 
     @Override
@@ -111,8 +114,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        //BleManager.getInstance().disconnectAllDevice();
-        //BleManager.getInstance().destroy();
+        BleManager.getInstance().disconnectAllDevice();
+        BleManager.getInstance().destroy();
     }
 
     @Override
@@ -171,8 +174,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     img_loading.setVisibility(View.GONE);
                     break;
             }
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                    selectedFragment).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,selectedFragment).commit();
             return true;
         }
     };
@@ -230,6 +232,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     startActivity(intent);
                 }
             }
+
+            @Override
+            public void onGraph(BleDevice bleDevice) {
+                if (BleManager.getInstance().isConnected(bleDevice)) {
+                    if (bleDevice.getGraphStatus() == 0) {
+                        bleDevice.setGraphStatus(1);
+                        showToast("Graphing Enabled");
+                    }
+                    else {
+                        bleDevice.setGraphStatus(0);
+                        showToast("Graphing Disabled");
+                    }
+                    mDeviceAdapter.notifyDataSetChanged();
+                }
+            }
         });
         ListView listView_device = (ListView) findViewById(R.id.list_device);
         listView_device.setAdapter(mDeviceAdapter);
@@ -283,7 +300,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .setDeviceName(true, names)
                 .setDeviceMac(mac)
                 .setAutoConnect(isAutoConnect)
-                .setScanTimeOut(10000)
+                .setScanTimeOut(6000) // SCAN TIMEOUT IN ms
                 .build();
         BleManager.getInstance().initScanRule(scanRuleConfig);
     }
@@ -324,6 +341,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onStartConnect() {
                 progressDialog.show();
+                progressDialog.setMessage("Connecting to device");
             }
 
             @Override
@@ -406,10 +424,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    // Checks if the device has bluetooth enabled, and prompt user for connection if not.
     private void checkPermissions() {
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (!bluetoothAdapter.isEnabled()) {
             Toast.makeText(this, getString(R.string.please_open_blue), Toast.LENGTH_LONG).show();
+            Intent enableBluetoothRequest = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            int REQUEST_ENABLE_BT = 1;
+            startActivityForResult(enableBluetoothRequest, REQUEST_ENABLE_BT);
             return;
         }
 
