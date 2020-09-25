@@ -114,6 +114,12 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/btn_scan"></FrameLayout>
 
+    <FrameLayout
+        android:id="@+id/fragment_container_data"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btn_scan"></FrameLayout>
+
     <ListView
         android:id="@+id/list_device"
         android:layout_width="match_parent"
@@ -127,8 +133,6 @@
         android:paddingEnd="5dp"
         android:scrollbars="none" >
     </ListView>
-
-
 
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/nav_view"

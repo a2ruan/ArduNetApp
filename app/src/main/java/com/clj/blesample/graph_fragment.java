@@ -4,6 +4,8 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,39 +49,40 @@ public class graph_fragment extends Fragment {
             chart2 = initChart(chart2,v,R.id.chart2, 21f);
             chart3 = initChart(chart3,v,R.id.chart3, 60f);
             chart4 = initChart(chart4,v,R.id.chart4, 400f);
-            showToast("1");
+            showToast("onCreate 1");
+
+            for (int i = 0;i < 50; i++) {
+                addEntry(chart1, 0, (float) i,(float) (Math.random() * 2) + 1030);
+                addEntry(chart1, 1, (float) i,(float) (Math.random() * 2) + 1040);
+
+                addEntry(chart2, 0, (float) i,(float) (Math.random() * 2) + 20);
+                addEntry(chart2, 1, (float) i,(float) (Math.random() * 3) + 22);
+
+                addEntry(chart3, 0, (float) i,(float) (Math.random() * 2) + 60);
+                addEntry(chart3, 1, (float) i,(float) (Math.random() * 2) + 61);
+
+                addEntry(chart4, 0, (float) i,(float) (Math.random() * 2) + 100);
+                addEntry(chart4, 1, (float) i,(float) (Math.random() * 2) + 101);
+            }
+            chart1.getAxisLeft().setAxisMaximum(chart1.getYMax()+chart1.getYMax()-chart1.getYMin());
+            chart1.getAxisLeft().setAxisMinimum(chart1.getYMin()-(chart1.getYMax()-chart1.getYMin()));
+
+            chart2.getAxisLeft().setAxisMaximum(chart2.getYMax()+chart2.getYMax()-chart2.getYMin());
+            chart2.getAxisLeft().setAxisMinimum(chart2.getYMin()-(chart2.getYMax()-chart2.getYMin()));
+
+            chart3.getAxisLeft().setAxisMaximum(chart3.getYMax()+chart3.getYMax()-chart3.getYMin());
+            chart3.getAxisLeft().setAxisMinimum(chart3.getYMin()-(chart3.getYMax()-chart3.getYMin()));
+
+            chart4.getAxisLeft().setAxisMaximum(chart4.getYMax()+chart4.getYMax()-chart4.getYMin());
+            chart4.getAxisLeft().setAxisMinimum(chart4.getYMin()-(chart4.getYMax()-chart4.getYMin()));
+
         }
         else
         {
-            showToast("2");
+            showToast("onCreate 2");
         }
 
-        BleManager.getInstance().getAllConnectedDevice();
 
-        for (int i = 0;i < 50; i++) {
-            addEntry(chart1, 0, (float) i,(float) (Math.random() * 2) + 1030);
-            addEntry(chart1, 1, (float) i,(float) (Math.random() * 2) + 1040);
-
-            addEntry(chart2, 0, (float) i,(float) (Math.random() * 2) + 20);
-            addEntry(chart2, 1, (float) i,(float) (Math.random() * 3) + 22);
-
-            addEntry(chart3, 0, (float) i,(float) (Math.random() * 2) + 60);
-            addEntry(chart3, 1, (float) i,(float) (Math.random() * 2) + 61);
-
-            addEntry(chart4, 0, (float) i,(float) (Math.random() * 2) + 100);
-            addEntry(chart4, 1, (float) i,(float) (Math.random() * 2) + 101);
-        }
-        chart1.getAxisLeft().setAxisMaximum(chart1.getYMax()+chart1.getYMax()-chart1.getYMin());
-        chart1.getAxisLeft().setAxisMinimum(chart1.getYMin()-(chart1.getYMax()-chart1.getYMin()));
-
-        chart2.getAxisLeft().setAxisMaximum(chart2.getYMax()+chart2.getYMax()-chart2.getYMin());
-        chart2.getAxisLeft().setAxisMinimum(chart2.getYMin()-(chart2.getYMax()-chart2.getYMin()));
-
-        chart3.getAxisLeft().setAxisMaximum(chart3.getYMax()+chart3.getYMax()-chart3.getYMin());
-        chart3.getAxisLeft().setAxisMinimum(chart3.getYMin()-(chart3.getYMax()-chart3.getYMin()));
-
-        chart4.getAxisLeft().setAxisMaximum(chart4.getYMax()+chart4.getYMax()-chart4.getYMin());
-        chart4.getAxisLeft().setAxisMinimum(chart4.getYMin()-(chart4.getYMax()-chart4.getYMin()));
 
         return v;
     }
@@ -131,13 +134,6 @@ public class graph_fragment extends Fragment {
         set.setValueTextSize(9f);
         set.setDrawValues(false);
         return set;
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-        //Save the fragment's state here
     }
 
     private void updateChart(LineChart chartTemp, View viewTemp, int viewID) {
@@ -217,11 +213,8 @@ public class graph_fragment extends Fragment {
         return chartTemp;
     }
 
-
-
-
-
     private void showToast (String msg) {
         Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
     }
+
 }

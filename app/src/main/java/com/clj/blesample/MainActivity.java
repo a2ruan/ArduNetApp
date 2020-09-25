@@ -2,6 +2,7 @@ package com.clj.blesample;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothGatt;
@@ -96,7 +97,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         //I added this if statement to keep the selected fragment when rotating the device
         if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,new device_fragment()).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,new device_fragment(),"deviceFragment").commit();
 
         }
 
@@ -150,33 +151,55 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             Fragment selectedFragment = null;
+            Fragment existingFragment = null;
+            String fragmentTag = null;
             Toolbar toolbarRef = findViewById(R.id.toolbar);
             switch (item.getItemId()) {
                 case R.id.navigation_device:
+                    fragmentTag = "deviceFragment";
                     selectedFragment = new device_fragment();
                     txt_setting.setText(getString(R.string.expand_search_settings));
                     toolbarRef.setTitle(R.string.title_device);
                     btn_scan.setVisibility(View.VISIBLE);
                     txt_setting.setVisibility(View.VISIBLE);
+
+                    findViewById(R.id.fragment_container).setVisibility(View.GONE);
+                    findViewById(R.id.fragment_container_data).setVisibility(View.GONE);
                     break;
                 case R.id.navigation_graph:
+                    fragmentTag = "graphFragment";
                     selectedFragment = new graph_fragment();
                     toolbarRef.setTitle(R.string.title_graph);
                     layout_setting.setVisibility(View.GONE);
                     btn_scan.setVisibility(View.GONE);
                     txt_setting.setVisibility(View.GONE);
                     img_loading.setVisibility(View.GONE);
+
+                    findViewById(R.id.fragment_container_data).setVisibility(View.GONE);
+
+                    if (getSupportFragmentManager().findFragmentByTag(fragmentTag) == null) {
+                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,selectedFragment,fragmentTag).commit();
+                    }
+                    findViewById(R.id.fragment_container).setVisibility(View.VISIBLE);
+
                     break;
                 case R.id.navigation_data:
+                    fragmentTag = "dataFragment";
                     selectedFragment = new data_fragment();
                     toolbarRef.setTitle(R.string.title_data);
                     layout_setting.setVisibility(View.GONE);
                     btn_scan.setVisibility(View.GONE);
                     txt_setting.setVisibility(View.GONE);
                     img_loading.setVisibility(View.GONE);
+
+                    findViewById(R.id.fragment_container).setVisibility(View.GONE);
+                    if (getSupportFragmentManager().findFragmentByTag(fragmentTag) == null) {
+                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container_data,selectedFragment,fragmentTag).commit();
+                    }
+                    findViewById(R.id.fragment_container_data).setVisibility(View.VISIBLE);
                     break;
             }
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,selectedFragment).commit();
+
             return true;
         }
     };
