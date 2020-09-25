@@ -115,24 +115,29 @@ public class DeviceAdapter extends BaseAdapter {
             holder.txt_mac.setText(mac);
             holder.txt_rssi.setText(String.valueOf(rssi));
             if (isConnected) {
-                holder.img_blue.setImageResource(R.drawable.ic_baseline_bluetooth_connected_24);
+
                 holder.txt_name.setTextColor(Color.rgb(0, 162, 237));
                 holder.txt_mac.setTextColor(Color.rgb(0, 162, 237));
                 holder.layout_idle.setVisibility(View.GONE);
                 holder.layout_connected.setVisibility(View.VISIBLE);
                 if (getGraphStatus == 1) {
                     holder.btn_graph.setBackgroundResource(R.drawable.ic_baseline_pause_24);
+                    holder.img_blue.setImageResource(R.drawable.ic_baseline_bluetooth_searching_24);
+                    holder.txt_mac.setText("Graphing On");
                 }
                 else {
                     holder.btn_graph.setBackgroundResource(R.drawable.ic_baseline_play_arrow_24);
+                    holder.img_blue.setImageResource(R.drawable.ic_baseline_bluetooth_connected_24);
+                    holder.txt_mac.setText("Device Paired");
                 }
             }
             else {
-                holder.img_blue.setImageResource(R.drawable.ic_baseline_bluetooth_searching_24);
+                holder.img_blue.setImageResource(R.drawable.ic_baseline_bluetooth_disabled_24);
                 holder.txt_name.setTextColor(Color.rgb(115,115,115));
                 holder.txt_mac.setTextColor(Color.rgb(115,115,115));
                 holder.layout_idle.setVisibility(View.VISIBLE);
                 holder.layout_connected.setVisibility(View.GONE);
+                holder.txt_mac.setText("Device Found");
             }
         }
 

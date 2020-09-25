@@ -56,7 +56,6 @@ import java.util.List;
 import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final int REQUEST_CODE_OPEN_GPS = 1;
     private static final int REQUEST_CODE_PERMISSION_LOCATION = 2;
@@ -73,6 +72,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ProgressDialog progressDialog;
 
     private BottomNavigationView navigationView;
+    private Fragment graph_fragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,13 +96,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         //I added this if statement to keep the selected fragment when rotating the device
         if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                    new device_fragment()).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,new device_fragment()).commit();
+
         }
 
         // FILTER BY DEFAULT "GAS SENSOR"
         et_name = (EditText) findViewById(R.id.et_name);
         et_name.setText("Gas Sensor");
+    }
+
+    protected void updateGraph() {
+
     }
 
     @Override
@@ -140,6 +144,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
         }
     }
+
+    // BOTTOM NAVIGATION MENU
     private BottomNavigationView.OnNavigationItemSelectedListener navListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -154,8 +160,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     txt_setting.setVisibility(View.VISIBLE);
                     break;
                 case R.id.navigation_graph:
-                    //Intent intent1 = new Intent(this, SecondActivity.class);
-                    //startActivity(intent1);
                     selectedFragment = new graph_fragment();
                     toolbarRef.setTitle(R.string.title_graph);
                     layout_setting.setVisibility(View.GONE);
@@ -164,8 +168,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     img_loading.setVisibility(View.GONE);
                     break;
                 case R.id.navigation_data:
-                    //Intent intent2 = new Intent(this, ThirdActivity.class);
-                    //startActivity(intent2);
                     selectedFragment = new data_fragment();
                     toolbarRef.setTitle(R.string.title_data);
                     layout_setting.setVisibility(View.GONE);

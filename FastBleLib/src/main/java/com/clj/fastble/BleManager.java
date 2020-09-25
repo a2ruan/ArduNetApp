@@ -342,7 +342,6 @@ public class BleManager {
         if (bleGattCallback == null) {
             throw new IllegalArgumentException("BleGattCallback can not be Null!");
         }
-
         if (!isBlueEnable()) {
             BleLog.e("Bluetooth not enable!");
             bleGattCallback.onConnectFail(bleDevice, new OtherException("Bluetooth not enable!"));
