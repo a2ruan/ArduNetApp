@@ -4,12 +4,82 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".graph_fragment">
+
+    <RelativeLayout
+        android:id="@+id/graph_actionbar"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#F6F6F6">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@id/img_blue"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+
+
+
+            <Spinner
+                android:id="@+id/spinner"
+                android:layout_width="80dp"
+                android:layout_height="40dp"
+                android:layout_marginBottom="0dp"
+                android:layout_marginEnd="0dp"
+                android:layout_marginStart="0dp"
+                android:textSize="@dimen/labelTextSize"
+                android:layout_marginTop="8dp"/>
+
+            <SeekBar
+                android:id="@+id/seekBar2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:id="@+id/testText"
+            android:text="hello world"
+            android:layout_height="match_parent"/>
+
+        <LinearLayout
+            android:id="@+id/layout_connected"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btn_pause_record"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/ic_baseline_pause_24"
+                android:textSize="0sp" />
+
+            <Button
+                android:id="@+id/btn_record"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/ic_baseline_fiber_manual_record_24"
+                android:textSize="0sp" />
+
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
     <ScrollView
         android:layout_width="fill_parent"
+        android:layout_marginTop = "50dp"
         android:layout_height="fill_parent" >
     <!-- TODO: Update blank fragment layout -->
-
-
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -148,4 +218,5 @@
 
         </RelativeLayout>
     </ScrollView>
+
 </RelativeLayout>

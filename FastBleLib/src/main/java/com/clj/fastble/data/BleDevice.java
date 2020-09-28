@@ -14,7 +14,7 @@ public class BleDevice implements Parcelable {
     private long mTimestampNanos;
 
     // CUSTOM VARIABLE TO INDICATE IF GRAPHING IS DESIRED
-    private int graphStatus;
+    private int graphStatus; // 0 = in range, 1 = paired, 2 = to graph
 
     public BleDevice(BluetoothDevice device) {
         mDevice = device;

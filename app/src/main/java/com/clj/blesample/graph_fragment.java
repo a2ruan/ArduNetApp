@@ -1,7 +1,10 @@
 package com.clj.blesample;
 
+import android.bluetooth.BluetoothClass;
+import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Parcel;
@@ -10,10 +13,20 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.clj.blesample.adapter.DeviceAdapter;
+import com.clj.blesample.operation.CharacteristicListFragment;
+import com.clj.blesample.operation.OperationActivity;
 import com.clj.fastble.BleManager;
+import com.clj.fastble.callback.BleGattCallback;
+import com.clj.fastble.callback.BleReadCallback;
 import com.clj.fastble.data.BleDevice;
+import com.clj.fastble.exception.BleException;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Legend;
@@ -27,29 +40,135 @@ import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+//SPINNER
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 
-public class graph_fragment extends Fragment {
+public class graph_fragment extends Fragment implements AdapterView.OnItemSelectedListener, View.OnClickListener {
+
+    private static final int LONG_DELAY = 3500; // 3.5 seconds
+    private static final int SHORT_DELAY = 2000; // 2 seconds
 
     private LineChart chart1;
     private LineChart chart2;
     private LineChart chart3;
     private LineChart chart4;
 
-    private BleDevice bleDevice;
-    private BluetoothGattService bluetoothGattService;
-    private BluetoothGattCharacteristic characteristic;
+    private TextView txt_test;
+    private Button btn_record;
+    private DeviceAdapter mDeviceAdapter;
+    private DeviceAdapter connectedDeviceAdapter;
+
+    private List<BluetoothGattService> serviceList;
+    private List<BluetoothGattCharacteristic> characteristicList;
+    private BleGattCallback bleGattCallback;
+
+    public final static UUID UUID_SERVICE = UUID.fromString("4fafc201-1fb5-459e-8fcc-c5c9c331914b");
+    public final static UUID UUID_CHARACTERISTIC = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26a8");
+
+    List<BleDevice> connectedDevices;
+
+    private String[] sample_rate = { "1", "10", "100", "1000", "10000"};
+
+    private void displayCount() {
+        connectedDeviceAdapter = ((MainActivity)getActivity()).getDeviceAdapter();
+        int count2 = connectedDeviceAdapter.getCount();
+
+        BleDevice tempDevice = connectedDeviceAdapter.getItem(0);
+        BleDevice tempDevice2 = connectedDeviceAdapter.getItem(1);
+        String tempName = Integer.toString(tempDevice.getGraphStatus());
+        String tempName2 = Integer.toString(tempDevice2.getGraphStatus());
+        //String num2 = Integer.toString(count2);
+        showToast(tempName + " " + tempName2,this.getActivity());
+    }
+
+    private void getData() {
+        connectedDeviceAdapter = ((MainActivity)getActivity()).getDeviceAdapter();
+        txt_test.setText("");
+        BleDevice tempDevice;
+
+        for (int i = 0; i < connectedDeviceAdapter.getCount();i++) {
+            tempDevice = connectedDeviceAdapter.getItem(i);
+            if (tempDevice.getGraphStatus() == 1) {
+                showToast(tempDevice.getName(), getActivity());
+                serviceList = BleManager.getInstance().getBluetoothGattServices(tempDevice);
+
+                for (BluetoothGattService gattService:serviceList) {
+                    characteristicList = BleManager.getInstance().getBluetoothGattCharacteristics(gattService);
+                    if (gattService.getUuid().toString().equalsIgnoreCase(UUID_SERVICE.toString())) {
+                        for (BluetoothGattCharacteristic gattCharacteristic : characteristicList) {
+                            if (gattCharacteristic.getUuid().toString().equalsIgnoreCase(UUID_CHARACTERISTIC.toString())) {
+                                BleManager.getInstance().read(
+                                        tempDevice,
+                                        gattService.getUuid().toString(),
+                                        gattCharacteristic.getUuid().toString(),
+                                        new BleReadCallback() {
+                                            @Override
+                                            public void onReadSuccess(final byte[] data) {
+                                                // DATA TESTING
+                                                String str = new String(data, StandardCharsets.UTF_8);
+                                                String[] sensorData = unpackageBLEPacket(str);
+                                                showToast(str,getActivity());
+
+                                                //showToast("EYY1",getActivity());
+                                            }
+                                            @Override
+                                            public void onReadFailure(final BleException exception) {
+                                                showToast("EYY2",getActivity());
+                                            }
+                                        });
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+
+//                characteristicList = BleManager.getInstance().getBluetoothGattCharacteristics(serviceList.get(0));
+//                final byte[] data = characteristicList.get(1).getValue();
+//                String str = new String(data, StandardCharsets.UTF_8);
+//                if (data.length == 0) {
+//                    showToast("hell naw",getActivity());
+//                }
+                //String str = new String(data, StandardCharsets.UTF_8);
+                //txt_test.setText(str);
+                //txt_test.setText(txt_test.getText() + " " + tempDevice.getName());
+        }
+    }
+
+
+
+    private void initUI(View v) {
+        characteristicList = new ArrayList<>();
+
+
+        txt_test = (TextView)v.findViewById(R.id.testText);
+        txt_test.setOnClickListener(this);
+
+        btn_record = (Button)v.findViewById(R.id.btn_record);
+        btn_record.setOnClickListener(this);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
         View v = inflater.inflate(R.layout.fragment_graph, container, false);
+        initUI(v);
+
         if (savedInstanceState == null) {
             chart1 = initChart(chart1,v,R.id.chart1, 1030f);
             chart2 = initChart(chart2,v,R.id.chart2, 21f);
             chart3 = initChart(chart3,v,R.id.chart3, 60f);
             chart4 = initChart(chart4,v,R.id.chart4, 400f);
-            showToast("onCreate 1");
+            //showToast("onCreate 1");
 
             for (int i = 0;i < 50; i++) {
                 addEntry(chart1, 0, (float) i,(float) (Math.random() * 2) + 1030);
@@ -82,10 +201,29 @@ public class graph_fragment extends Fragment {
             showToast("onCreate 2");
         }
 
-
+        // SPINNER INITIALIZATION
+        Spinner spin = (Spinner) v.findViewById(R.id.spinner);
+        spin.setOnItemSelectedListener(this);
+        //Creating the ArrayAdapter instance having the country list
+        ArrayAdapter aa = new ArrayAdapter(getActivity(),android.R.layout.simple_spinner_item,sample_rate);
+        aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        //Setting the ArrayAdapter data on the Spinner
+        spin.setAdapter(aa);
 
         return v;
     }
+
+    // SPINNER OVERRIDES
+    @Override
+    public void onItemSelected(AdapterView<?> arg0, View arg1, int position, long id) {
+
+    }
+    //SPINNER OVERRIDE
+    @Override
+    public void onNothingSelected(AdapterView<?> arg0) {
+        // TODO Auto-generated method stub
+    }
+
 
     private void addEntry(LineChart chartTemp, int dataSetIndex, float xVal, float yVal) {
 
@@ -217,4 +355,69 @@ public class graph_fragment extends Fragment {
         Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
     }
 
+    private void showToast (String msg, Context context) {
+        Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
+    }
+
+    // BLE DECODER
+    private static String hexToAscii(String hexStr) {
+        StringBuilder output = new StringBuilder("");
+
+        for (int i = 0; i < hexStr.length(); i += 2) {
+            String str = hexStr.substring(i, i + 2);
+            output.append((char) Integer.parseInt(str, 16));
+        }
+
+        return output.toString();
+    }
+
+    private static String getStringRepresentation(ArrayList<Character> list)
+    {
+        StringBuilder builder = new StringBuilder(list.size());
+        for(Character ch: list)
+        {
+            builder.append(ch);
+        }
+        return builder.toString();
+    }
+
+    private static String[] unpackageBLEPacket(String packetData)
+    {
+        String[] sensorData = packetData.split("/");
+        for (int i = 0;i < sensorData.length;i++)
+        {
+            String dataID = String.valueOf(sensorData[i].charAt(0));
+            switch(dataID) {
+                case "A":
+                    sensorData[i] = "Time = " + sensorData[i].substring(1) + "ms";
+                    break;
+                case "B":
+                    sensorData[i] = "Temp = " + sensorData[i].substring(1) + "deg C";
+                    break;
+                case "C":
+                    sensorData[i] = "RH = " + sensorData[i].substring(1) + "%";
+                    break;
+                case "D":
+                    sensorData[i] = "R = " + sensorData[i].substring(1) + "ohm";
+                    break;
+                case "E":
+                    sensorData[i] = "dR = " + sensorData[i].substring(1) + "ohm per s";
+                    break;
+                case "F":
+                    sensorData[i] = "Conc = " + sensorData[i].substring(1) + "ppm";
+                    break;
+            }
+        }
+        return sensorData;
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.btn_record:
+                //displayCount();
+                getData();
+                break;
+        }
+    }
 }

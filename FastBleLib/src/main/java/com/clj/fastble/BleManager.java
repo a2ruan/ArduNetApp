@@ -811,6 +811,7 @@ public class BleManager {
         return null;
     }
 
+    // MAIN GATT SERVICES
     public List<BluetoothGattService> getBluetoothGattServices(BleDevice bleDevice) {
         BluetoothGatt gatt = getBluetoothGatt(bleDevice);
         if (gatt != null) {

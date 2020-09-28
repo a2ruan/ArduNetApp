@@ -23,15 +23,18 @@ public class DeviceAdapter extends BaseAdapter {
 
     private Context context;
     private List<BleDevice> bleDeviceList;
+    private List<BleDevice> blePairedDeviceList;
 
     public DeviceAdapter(Context context) {
         this.context = context;
         bleDeviceList = new ArrayList<>();
+        blePairedDeviceList = new ArrayList<>();
     }
 
     public void addDevice(BleDevice bleDevice) {
         removeDevice(bleDevice);
         bleDeviceList.add(bleDevice);
+
     }
 
     public void removeDevice(BleDevice bleDevice) {

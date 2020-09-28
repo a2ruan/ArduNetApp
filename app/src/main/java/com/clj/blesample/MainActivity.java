@@ -67,9 +67,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private EditText et_name, et_mac, et_uuid;
     private Switch sw_auto;
     private ImageView img_loading;
+    private ListView list_device;
 
     private Animation operatingAnim;
-    private DeviceAdapter mDeviceAdapter;
+    private static DeviceAdapter mDeviceAdapter;
     private ProgressDialog progressDialog;
 
     private BottomNavigationView navigationView;
@@ -162,6 +163,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     toolbarRef.setTitle(R.string.title_device);
                     btn_scan.setVisibility(View.VISIBLE);
                     txt_setting.setVisibility(View.VISIBLE);
+                    list_device.setVisibility(View.VISIBLE);
 
                     findViewById(R.id.fragment_container).setVisibility(View.GONE);
                     findViewById(R.id.fragment_container_data).setVisibility(View.GONE);
@@ -173,7 +175,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     layout_setting.setVisibility(View.GONE);
                     btn_scan.setVisibility(View.GONE);
                     txt_setting.setVisibility(View.GONE);
-                    img_loading.setVisibility(View.GONE);
+                    list_device.setVisibility(View.GONE);
 
                     findViewById(R.id.fragment_container_data).setVisibility(View.GONE);
 
@@ -190,7 +192,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     layout_setting.setVisibility(View.GONE);
                     btn_scan.setVisibility(View.GONE);
                     txt_setting.setVisibility(View.GONE);
-                    img_loading.setVisibility(View.GONE);
+                    list_device.setVisibility(View.GONE);
 
                     findViewById(R.id.fragment_container).setVisibility(View.GONE);
                     if (getSupportFragmentManager().findFragmentByTag(fragmentTag) == null) {
@@ -199,7 +201,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     findViewById(R.id.fragment_container_data).setVisibility(View.VISIBLE);
                     break;
             }
-
             return true;
         }
     };
@@ -211,6 +212,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void initView() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        list_device = (ListView) findViewById(R.id.list_device);
 
         btn_scan = (Button) findViewById(R.id.btn_scan);
         btn_scan.setText(getString(R.string.start_scan));
@@ -527,4 +529,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    public DeviceAdapter getDeviceAdapter() {
+        return mDeviceAdapter;
+    }
 }
