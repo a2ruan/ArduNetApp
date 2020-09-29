@@ -7,6 +7,7 @@ import android.bluetooth.BluetoothGattService;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -18,6 +19,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,26 +49,32 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
 import java.util.UUID;
 //SPINNER
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-
+import androidx.annotation.RequiresApi;
 import java.util.Calendar;
 
-
-
-public class graph_fragment extends Fragment implements AdapterView.OnItemSelectedListener, View.OnClickListener {
+public class graph_fragment extends Fragment implements View.OnClickListener {
 
     private static final int LONG_DELAY = 3500; // 3.5 seconds
     private static final int SHORT_DELAY = 2000; // 2 seconds
+    public final static UUID UUID_SERVICE = UUID.fromString("4fafc201-1fb5-459e-8fcc-c5c9c331914b");
+    public final static UUID UUID_CHARACTERISTIC = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26a8");
+    private boolean graphStatus;
+    private boolean displayGraphStatus;
 
     private float xValueTemp;
     private float previousTime;
     private float currentTime;
+    private int dataSetIndex;
 
     private LineChart chart1;
     private LineChart chart2;
@@ -74,78 +83,76 @@ public class graph_fragment extends Fragment implements AdapterView.OnItemSelect
 
     private TextView txt_test;
     private Button btn_record;
+    private RelativeLayout addDevicesReminder;
     private Button btn_stop;
+
     private DeviceAdapter mDeviceAdapter;
     private DeviceAdapter connectedDeviceAdapter;
-
     private List<BluetoothGattService> serviceList;
     private List<BluetoothGattCharacteristic> characteristicList;
-    private BleGattCallback bleGattCallback;
-
-    Hashtable<String, String> my_dict = new Hashtable<String, String>();
-
-    private boolean graphStatus;
-
-    public final static UUID UUID_SERVICE = UUID.fromString("4fafc201-1fb5-459e-8fcc-c5c9c331914b");
-    public final static UUID UUID_CHARACTERISTIC = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26a8");
 
     List<BleDevice> connectedDevices;
+    Map<String, Integer> mymap;
 
-    private String[] sample_rate = { "1", "10", "100", "1000", "10000"};
-
-    private void displayCount() {
-        connectedDeviceAdapter = ((MainActivity)getActivity()).getDeviceAdapter();
-        int count2 = connectedDeviceAdapter.getCount();
-
-        BleDevice tempDevice = connectedDeviceAdapter.getItem(0);
-        BleDevice tempDevice2 = connectedDeviceAdapter.getItem(1);
-        String tempName = Integer.toString(tempDevice.getGraphStatus());
-        String tempName2 = Integer.toString(tempDevice2.getGraphStatus());
-        //String num2 = Integer.toString(count2);
-        showToast(tempName + " " + tempName2,this.getActivity());
-    }
-
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     private void getData() {
+        //txt_test.setText(" ");
         connectedDeviceAdapter = ((MainActivity)getActivity()).getDeviceAdapter();
-        txt_test.setText("");
-        BleDevice tempDevice;
-
-        for (int i = 0; i < connectedDeviceAdapter.getCount();i++) {
-            tempDevice = connectedDeviceAdapter.getItem(i);
-            if (tempDevice.getGraphStatus() == 1) {
-                //showToast(tempDevice.getName(), getActivity());
+        for (int ii = 0; ii < connectedDeviceAdapter.getCount();ii++) {
+            final BleDevice tempDevice = connectedDeviceAdapter.getItem(ii); // Get BLE devices from connected list
+            if (tempDevice.getGraphStatus() == 1) { // Filter by graph status
                 serviceList = BleManager.getInstance().getBluetoothGattServices(tempDevice);
-
-                for (BluetoothGattService gattService:serviceList) {
+                for (BluetoothGattService gattService:serviceList) { // Parse all services
                     characteristicList = BleManager.getInstance().getBluetoothGattCharacteristics(gattService);
-                    if (gattService.getUuid().toString().equalsIgnoreCase(UUID_SERVICE.toString())) {
-                        for (BluetoothGattCharacteristic gattCharacteristic : characteristicList) {
-                            if (gattCharacteristic.getUuid().toString().equalsIgnoreCase(UUID_CHARACTERISTIC.toString())) {
+                    if (gattService.getUuid().toString().equalsIgnoreCase(UUID_SERVICE.toString())) { // Filter by UUID
+                        for (BluetoothGattCharacteristic gattCharacteristic : characteristicList) { // Parse all characteristics
+                            if (gattCharacteristic.getUuid().toString().equalsIgnoreCase(UUID_CHARACTERISTIC.toString())) { // Filter by UUID
                                 BleManager.getInstance().read(
                                         tempDevice,
                                         gattService.getUuid().toString(),
                                         gattCharacteristic.getUuid().toString(),
-                                        new BleReadCallback() {
+                                        new BleReadCallback() { // Get broadcast
+                                            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
                                             @Override
                                             public void onReadSuccess(final byte[] data) {
-                                                // DATA TESTING
+                                                //txt_test.setText(txt_test.getText() + tempDevice.getMac());
+                                                if (mymap.get(tempDevice.getMac()) == null) {
+                                                    //showToast(finalTempDevice.getMac());
+                                                    int randomColor = getRandomColor();
+                                                    //txt_test.setText(txt_test.getText() + tempDevice.getName() + " ");
+
+                                                    ILineDataSet tempDataSet = initializeLineDataSet(tempDevice.getName(),randomColor);
+                                                    chart1.getData().addDataSet(tempDataSet);
+                                                    chart2.getData().addDataSet(initializeLineDataSet(tempDevice.getName(),randomColor));
+                                                    chart3.getData().addDataSet(initializeLineDataSet(tempDevice.getName(),randomColor));
+                                                    chart4.getData().addDataSet(initializeLineDataSet(tempDevice.getName(),randomColor));
+                                                    dataSetIndex = chart1.getData().getDataSetCount()-1;
+
+                                                    //showToast(Integer.toString(dataSetIndex));
+                                                    mymap.put(tempDevice.getMac(),dataSetIndex);
+                                                }
+                                                else {
+                                                    dataSetIndex = mymap.get(tempDevice.getMac());
+                                                }
+                                                //showToast(Integer.toString(dataSetIndex));
+                                                //showToast(Integer.toString(mymap.size()));
+                                                //txt_test.setText(txt_test.getText() + Integer.toString(mymap.get(tempDevice.getMac())) + " ");
                                                 String str = new String(data, StandardCharsets.UTF_8);
                                                 String[] sensorData = unpackageBLEPacket(str);
-
+                                                //showToast(Float.toString(xValueTemp) + "s @ " + sensorData[3] + "ohm");
                                                 // 0 = time, 1 = temp, 2 = RH, 3 = resistance, 4 = dR, 5 = ppm
-                                                addEntry(chart1, 0, (float) xValueTemp,(float) Float.valueOf(sensorData[3])); // Resistance
-                                                addEntry(chart2, 0, (float) xValueTemp,(float) Float.valueOf(sensorData[1])); // Temperature
-                                                addEntry(chart3, 0, (float) xValueTemp,(float) Float.valueOf(sensorData[2])); // Relative Humidity
-                                                addEntry(chart4, 0, (float) xValueTemp,(float) Float.valueOf(sensorData[5])); // Gas Concentration
-
-                                                //showToast("EYY1",getActivity());
+                                                addEntry(chart1, mymap.get(tempDevice.getMac()), (float) xValueTemp,(float) Float.valueOf(sensorData[3])); // Resistance
+                                                addEntry(chart2, mymap.get(tempDevice.getMac()) , (float) xValueTemp,(float) Float.valueOf(sensorData[1])); // Temperature
+                                                addEntry(chart3, mymap.get(tempDevice.getMac()), (float) xValueTemp,(float) Float.valueOf(sensorData[2])); // Relative Humidity
+                                                addEntry(chart4, mymap.get(tempDevice.getMac()), (float) xValueTemp,(float) Float.valueOf(sensorData[5])); // Gas Concentration
+                                                xValueTemp = xValueTemp + 1;
                                             }
                                             @Override
                                             public void onReadFailure(final BleException exception) {
-                                                //showToast("EYY2",getActivity());
+
                                             }
-                                        });
-                                return;
+                                        }
+                                );
                             }
                         }
                     }
@@ -156,7 +163,11 @@ public class graph_fragment extends Fragment implements AdapterView.OnItemSelect
 
     private void initUI(View v) {
         characteristicList = new ArrayList<>();
-        //Date currentTime = Calendar.getInstance().getTime();
+        mymap = new HashMap<String, Integer>();
+        dataSetIndex = 0;
+
+        addDevicesReminder = (RelativeLayout) v.findViewById(R.id.addDevicesReminder);
+        addDevicesReminder.bringToFront();
 
         txt_test = (TextView)v.findViewById(R.id.testText);
         txt_test.setOnClickListener(this);
@@ -174,6 +185,7 @@ public class graph_fragment extends Fragment implements AdapterView.OnItemSelect
         super.onCreate(savedInstanceState);
         xValueTemp = 0;
         graphStatus = false;
+        displayGraphStatus = false;
         View v = inflater.inflate(R.layout.fragment_graph, container, false);
         initUI(v);
 
@@ -182,97 +194,45 @@ public class graph_fragment extends Fragment implements AdapterView.OnItemSelect
             chart2 = initChart(chart2,v,R.id.chart2, 21f);
             chart3 = initChart(chart3,v,R.id.chart3, 60f);
             chart4 = initChart(chart4,v,R.id.chart4, 400f);
-            //showToast("onCreate 1");
-
-            for (int i = 0;i < 1; i++) {
-                addEntry(chart1, 0, (float) i,(float) (Math.random() * 2) + 1030);
-                addEntry(chart1, 1, (float) i,(float) (Math.random() * 2) + 1040);
-
-                addEntry(chart2, 0, (float) i,(float) (Math.random() * 2) + 20);
-                addEntry(chart2, 1, (float) i,(float) (Math.random() * 3) + 22);
-
-                addEntry(chart3, 0, (float) i,(float) (Math.random() * 2) + 60);
-                addEntry(chart3, 1, (float) i,(float) (Math.random() * 2) + 61);
-
-                addEntry(chart4, 0, (float) i,(float) (Math.random() * 2) + 100);
-                addEntry(chart4, 1, (float) i,(float) (Math.random() * 2) + 101);
-            }
-            chart1.getAxisLeft().setAxisMaximum(chart1.getYMax()+chart1.getYMax()-chart1.getYMin());
-            chart1.getAxisLeft().setAxisMinimum(chart1.getYMin()-(chart1.getYMax()-chart1.getYMin()));
-
-            chart2.getAxisLeft().setAxisMaximum(chart2.getYMax()+chart2.getYMax()-chart2.getYMin());
-            chart2.getAxisLeft().setAxisMinimum(chart2.getYMin()-(chart2.getYMax()-chart2.getYMin()));
-
-            chart3.getAxisLeft().setAxisMaximum(chart3.getYMax()+chart3.getYMax()-chart3.getYMin());
-            chart3.getAxisLeft().setAxisMinimum(chart3.getYMin()-(chart3.getYMax()-chart3.getYMin()));
-
-            chart4.getAxisLeft().setAxisMaximum(chart4.getYMax()+chart4.getYMax()-chart4.getYMin());
-            chart4.getAxisLeft().setAxisMinimum(chart4.getYMin()-(chart4.getYMax()-chart4.getYMin()));
-
+            rescaleYAxis(chart1);
+            rescaleYAxis(chart2);
+            rescaleYAxis(chart3);
+            rescaleYAxis(chart4);
         }
-        else
-        {
-            //showToast("onCreate 2");
-        }
-
-        // SPINNER INITIALIZATION
-        Spinner spin = (Spinner) v.findViewById(R.id.spinner);
-        spin.setOnItemSelectedListener(this);
-        //Creating the ArrayAdapter instance having the country list
-        ArrayAdapter aa = new ArrayAdapter(getActivity(),android.R.layout.simple_spinner_item,sample_rate);
-        aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        //Setting the ArrayAdapter data on the Spinner
-        spin.setAdapter(aa);
-
         return v;
     }
 
-    // SPINNER OVERRIDES
-    @Override
-    public void onItemSelected(AdapterView<?> arg0, View arg1, int position, long id) {
+    public void rescaleYAxis(LineChart lc) {
+        lc.getAxisLeft().setAxisMaximum(lc.getYMax()+lc.getYMax()-lc.getYMin());
+
+        if (lc.getYMin() > 0) {
+            lc.getAxisLeft().setAxisMinimum(lc.getYMin()-(lc.getYMax()-lc.getYMin()));
+        }
+        else {
+            lc.getAxisLeft().setAxisMinimum(0);
+        }
+
 
     }
-    //SPINNER OVERRIDE
-    @Override
-    public void onNothingSelected(AdapterView<?> arg0) {
-        // TODO Auto-generated method stub
-    }
-
 
     private void addEntry(LineChart chartTemp, int dataSetIndex, float xVal, float yVal) {
-
         LineData data = chartTemp.getData();
-
         if (data != null) {
-
             ILineDataSet set = data.getDataSetByIndex(dataSetIndex);
-            // set.addEntry(...); // can be called as well
-
             if (set == null) {
                 set = createSet();
                 data.addDataSet(set);
             }
-            //data.addEntry(new Entry(set.getEntryCount(), (float) (Math.random() * 5) + 1030f), 0);
             data.addEntry(new Entry(set.getEntryCount(), yVal),dataSetIndex);
             data.notifyDataChanged();
-
-            // let the chart know it's data has changed
             chartTemp.notifyDataSetChanged();
-
-            // limit the number of visible entries
-            chartTemp.setVisibleXRangeMaximum(120);
-            // chart.setVisibleYRange(30, AxisDependency.LEFT);
-
-            // move to the latest entry
+            chartTemp.setVisibleXRangeMaximum(30);
             chartTemp.moveViewToX(data.getEntryCount());
-
-            // this automatically refreshes the chart (calls invalidate())
             chartTemp.moveViewTo(data.getXMax()-7, 55f, YAxis.AxisDependency.LEFT);
         }
     }
 
     private LineDataSet createSet() {
-
         LineDataSet set = new LineDataSet(null, "Dynamic Data");
         set.setAxisDependency(YAxis.AxisDependency.LEFT);
         set.setColor(ColorTemplate.getHoloBlue());
@@ -304,15 +264,13 @@ public class graph_fragment extends Fragment implements AdapterView.OnItemSelect
         chartTemp.setDragEnabled(true);
         chartTemp.setScaleEnabled(true);
         chartTemp.setPinchZoom(true);
-        //chartTemp.setBorderColor(R.color.chartBorder);
-        chartTemp.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
-        chartTemp.getAxisLeft().setTextColor(R.color.colorTextPrimary); // left y-axis
-        chartTemp.getAxisRight().setTextColor(R.color.colorTextPrimary); // right y-axis
-        chartTemp.getXAxis().setTextColor(R.color.colorTextPrimary);
 
+        chartTemp.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
+        chartTemp.getAxisLeft().setTextColor(R.color.colorTextPrimary);
+        chartTemp.getAxisRight().setTextColor(R.color.colorTextPrimary);
+        chartTemp.getXAxis().setTextColor(R.color.colorTextPrimary);
         chartTemp.getXAxis().setTextSize(10);
         chartTemp.getAxisLeft().setTextSize(10);
-
         chartTemp.getAxisRight().setEnabled(false);
         chartTemp.getLegend().setTextColor(R.color.colorTextPrimary);
         chartTemp.getLegend().setForm(Legend.LegendForm.CIRCLE);
@@ -323,36 +281,42 @@ public class graph_fragment extends Fragment implements AdapterView.OnItemSelect
         legend.setOrientation(Legend.LegendOrientation.HORIZONTAL);
         legend.setDrawInside(false);
 
-        // Temporary Data
+        // First Data Set
+        int randColor = getRandomColor();
         ArrayList<Entry> yValues = new ArrayList<>();
-        yValues.add(new Entry(0, (float) (Math.random() * 5) + rangeApprox));
-
-        LineDataSet set1 = new LineDataSet(yValues,"Gas Sensor 1");
-        set1.setDrawValues(false);
+        yValues.add(new Entry(0, 0));
+        LineDataSet set1 = new LineDataSet(yValues,"");
         set1.setCircleRadius(1);
-        set1.setFillColor(Color.rgb(255,179,0));
-        set1.setCircleColor(Color.rgb(255,179,0));
-        set1.setColor(Color.rgb(255,179,0));
-        set1.setFillAlpha(80);
-        set1.setDrawFilled(true);
+        set1.setFillColor(Color.rgb(255,255,255));
+        set1.setCircleColor(Color.rgb(255,255,255));
+        set1.setColor(Color.rgb(255,255,255));
         ArrayList<ILineDataSet> dataSets = new ArrayList<>();
         dataSets.add(set1);
-
-        // Temp Data 2
-        ArrayList<Entry> yValues2 = new ArrayList<>();
-        yValues2.add(new Entry(0, (float) (Math.random() * 5) + rangeApprox));
-
-        LineDataSet set2 = new LineDataSet(yValues2,"Gas Sensor 2");
-        set2.setDrawValues(false);
-        set2.setCircleRadius(1);
-        set2.setFillAlpha(80);
-        set2.setDrawFilled(true);
-        dataSets.add(set2);
-
         LineData data = new LineData(dataSets);
+        data.setDrawValues(false);
         chartTemp.setData(data);
-
         return chartTemp;
+    }
+
+    private LineDataSet initializeLineDataSet(String setName, int randomColor) {
+        ArrayList<Entry> yValues = new ArrayList<>();
+        LineDataSet setTemp = new LineDataSet(yValues,setName);
+        setTemp.setCircleRadius(1);
+        setTemp.setFillColor(randomColor);
+        setTemp.setCircleColor(randomColor);
+        setTemp.setColor(randomColor);
+        setTemp.setFillAlpha(80);
+        setTemp.setDrawFilled(true);
+        return setTemp;
+    }
+
+    private int getRandomColor() {
+        Random rand = new Random();
+        int r = rand.nextInt(255);
+        int g = rand.nextInt(255);
+        int b = rand.nextInt(255);
+        int randomColor = Color.rgb(r,g,b);
+        return randomColor;
     }
 
     private void showToast (String msg) {
@@ -393,29 +357,22 @@ public class graph_fragment extends Fragment implements AdapterView.OnItemSelect
             String dataID = String.valueOf(sensorData[i].charAt(0));
             switch(dataID) {
                 // 0 = time, 1 = temp, 2 = RH, 3 = resistance, 4 = dR, 5 = ppm
-
                 case "A":
-                    //sensorData[i] = "Time = " + sensorData[i].substring(1) + "ms";
                     sensorData[i] = sensorData[i].substring(1);
                     break;
                 case "B":
-                    //sensorData[i] = "Temp = " + sensorData[i].substring(1) + "deg C";
                     sensorData[i] = sensorData[i].substring(1);
                     break;
                 case "C":
-                    //sensorData[i] = "RH = " + sensorData[i].substring(1) + "%";
                     sensorData[i] = sensorData[i].substring(1);
                     break;
                 case "D":
-                    //sensorData[i] = "R = " + sensorData[i].substring(1) + "ohm";
                     sensorData[i] = sensorData[i].substring(1);
                     break;
                 case "E":
-                    //sensorData[i] = "dR = " + sensorData[i].substring(1) + "ohm per s";
                     sensorData[i] = sensorData[i].substring(1);
                     break;
                 case "F":
-                    //sensorData[i] = "Conc = " + sensorData[i].substring(1) + "ppm";
                     sensorData[i] = sensorData[i].substring(1);
                     break;
             }
@@ -428,16 +385,26 @@ public class graph_fragment extends Fragment implements AdapterView.OnItemSelect
     public void startGraphing() {
         if (thread != null) {thread.interrupt();}
         final Runnable runnable = new Runnable() {
+            int counter = 0;
+
+            @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
             @Override
             public void run() {
                 //addEntry();
                 if (graphStatus) {
+                    addDevicesReminder.setVisibility(View.GONE);
                     getData();
                 }
+                if (counter%5 == 0) {
+                    rescaleYAxis(chart1);
+                    rescaleYAxis(chart2);
+                    rescaleYAxis(chart3);
+                    rescaleYAxis(chart4);
+                }
+                counter=counter + 1;
             }
         };
         thread = new Thread(new Runnable() {
-
             @Override
             public void run() {
                 while (graphStatus) {
@@ -482,5 +449,4 @@ public class graph_fragment extends Fragment implements AdapterView.OnItemSelect
                 break;
         }
     }
-
 }
