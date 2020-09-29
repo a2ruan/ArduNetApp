@@ -53,12 +53,12 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/btn_pause_record"
+                android:id="@+id/btn_save_record"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:background="@drawable/ic_baseline_pause_24"
+                android:background="@drawable/ic_baseline_stop_24"
                 android:textSize="0sp" />
 
             <Button

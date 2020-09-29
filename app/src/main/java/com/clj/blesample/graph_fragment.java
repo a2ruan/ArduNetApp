@@ -6,10 +6,12 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 import android.content.Context;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,6 +45,8 @@ import com.github.mikephil.charting.utils.ColorTemplate;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.UUID;
 //SPINNER
@@ -50,10 +54,18 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
+import java.util.Calendar;
+
+
+
 public class graph_fragment extends Fragment implements AdapterView.OnItemSelectedListener, View.OnClickListener {
 
     private static final int LONG_DELAY = 3500; // 3.5 seconds
     private static final int SHORT_DELAY = 2000; // 2 seconds
+
+    private float xValueTemp;
+    private float previousTime;
+    private float currentTime;
 
     private LineChart chart1;
     private LineChart chart2;
@@ -62,12 +74,17 @@ public class graph_fragment extends Fragment implements AdapterView.OnItemSelect
 
     private TextView txt_test;
     private Button btn_record;
+    private Button btn_stop;
     private DeviceAdapter mDeviceAdapter;
     private DeviceAdapter connectedDeviceAdapter;
 
     private List<BluetoothGattService> serviceList;
     private List<BluetoothGattCharacteristic> characteristicList;
     private BleGattCallback bleGattCallback;
+
+    Hashtable<String, String> my_dict = new Hashtable<String, String>();
+
+    private boolean graphStatus;
 
     public final static UUID UUID_SERVICE = UUID.fromString("4fafc201-1fb5-459e-8fcc-c5c9c331914b");
     public final static UUID UUID_CHARACTERISTIC = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26a8");
@@ -96,7 +113,7 @@ public class graph_fragment extends Fragment implements AdapterView.OnItemSelect
         for (int i = 0; i < connectedDeviceAdapter.getCount();i++) {
             tempDevice = connectedDeviceAdapter.getItem(i);
             if (tempDevice.getGraphStatus() == 1) {
-                showToast(tempDevice.getName(), getActivity());
+                //showToast(tempDevice.getName(), getActivity());
                 serviceList = BleManager.getInstance().getBluetoothGattServices(tempDevice);
 
                 for (BluetoothGattService gattService:serviceList) {
@@ -114,13 +131,18 @@ public class graph_fragment extends Fragment implements AdapterView.OnItemSelect
                                                 // DATA TESTING
                                                 String str = new String(data, StandardCharsets.UTF_8);
                                                 String[] sensorData = unpackageBLEPacket(str);
-                                                showToast(str,getActivity());
+
+                                                // 0 = time, 1 = temp, 2 = RH, 3 = resistance, 4 = dR, 5 = ppm
+                                                addEntry(chart1, 0, (float) xValueTemp,(float) Float.valueOf(sensorData[3])); // Resistance
+                                                addEntry(chart2, 0, (float) xValueTemp,(float) Float.valueOf(sensorData[1])); // Temperature
+                                                addEntry(chart3, 0, (float) xValueTemp,(float) Float.valueOf(sensorData[2])); // Relative Humidity
+                                                addEntry(chart4, 0, (float) xValueTemp,(float) Float.valueOf(sensorData[5])); // Gas Concentration
 
                                                 //showToast("EYY1",getActivity());
                                             }
                                             @Override
                                             public void onReadFailure(final BleException exception) {
-                                                showToast("EYY2",getActivity());
+                                                //showToast("EYY2",getActivity());
                                             }
                                         });
                                 return;
@@ -129,37 +151,29 @@ public class graph_fragment extends Fragment implements AdapterView.OnItemSelect
                     }
                 }
             }
-
-//                characteristicList = BleManager.getInstance().getBluetoothGattCharacteristics(serviceList.get(0));
-//                final byte[] data = characteristicList.get(1).getValue();
-//                String str = new String(data, StandardCharsets.UTF_8);
-//                if (data.length == 0) {
-//                    showToast("hell naw",getActivity());
-//                }
-                //String str = new String(data, StandardCharsets.UTF_8);
-                //txt_test.setText(str);
-                //txt_test.setText(txt_test.getText() + " " + tempDevice.getName());
         }
     }
 
-
-
     private void initUI(View v) {
         characteristicList = new ArrayList<>();
-
+        //Date currentTime = Calendar.getInstance().getTime();
 
         txt_test = (TextView)v.findViewById(R.id.testText);
         txt_test.setOnClickListener(this);
 
         btn_record = (Button)v.findViewById(R.id.btn_record);
         btn_record.setOnClickListener(this);
+
+        btn_stop = (Button)v.findViewById(R.id.btn_save_record);
+        btn_stop.setOnClickListener(this);
+        btn_stop.setVisibility(v.GONE);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
+        xValueTemp = 0;
+        graphStatus = false;
         View v = inflater.inflate(R.layout.fragment_graph, container, false);
         initUI(v);
 
@@ -170,7 +184,7 @@ public class graph_fragment extends Fragment implements AdapterView.OnItemSelect
             chart4 = initChart(chart4,v,R.id.chart4, 400f);
             //showToast("onCreate 1");
 
-            for (int i = 0;i < 50; i++) {
+            for (int i = 0;i < 1; i++) {
                 addEntry(chart1, 0, (float) i,(float) (Math.random() * 2) + 1030);
                 addEntry(chart1, 1, (float) i,(float) (Math.random() * 2) + 1040);
 
@@ -198,7 +212,7 @@ public class graph_fragment extends Fragment implements AdapterView.OnItemSelect
         }
         else
         {
-            showToast("onCreate 2");
+            //showToast("onCreate 2");
         }
 
         // SPINNER INITIALIZATION
@@ -312,13 +326,9 @@ public class graph_fragment extends Fragment implements AdapterView.OnItemSelect
         // Temporary Data
         ArrayList<Entry> yValues = new ArrayList<>();
         yValues.add(new Entry(0, (float) (Math.random() * 5) + rangeApprox));
-//        yValues.add(new Entry(1, (float) (Math.random() * 5) + rangeApprox));
-//        yValues.add(new Entry(2, (float) (Math.random() * 5) + rangeApprox));
-//        yValues.add(new Entry(3, (float) (Math.random() * 5) + rangeApprox));
-//        yValues.add(new Entry(4, (float) (Math.random() * 5) + rangeApprox));
-//        yValues.add(new Entry(5, (float) (Math.random() * 5) + rangeApprox));
 
         LineDataSet set1 = new LineDataSet(yValues,"Gas Sensor 1");
+        set1.setDrawValues(false);
         set1.setCircleRadius(1);
         set1.setFillColor(Color.rgb(255,179,0));
         set1.setCircleColor(Color.rgb(255,179,0));
@@ -327,19 +337,13 @@ public class graph_fragment extends Fragment implements AdapterView.OnItemSelect
         set1.setDrawFilled(true);
         ArrayList<ILineDataSet> dataSets = new ArrayList<>();
         dataSets.add(set1);
-        //LineData data = new LineData(dataSets);
-        //chartTemp.setData(data);
 
         // Temp Data 2
         ArrayList<Entry> yValues2 = new ArrayList<>();
         yValues2.add(new Entry(0, (float) (Math.random() * 5) + rangeApprox));
-//        yValues2.add(new Entry(1, (float) (Math.random() * 5) + rangeApprox));
-//        yValues2.add(new Entry(2, (float) (Math.random() * 5) + rangeApprox));
-//        yValues2.add(new Entry(3, (float) (Math.random() * 5) + rangeApprox));
-//        yValues2.add(new Entry(4, (float) (Math.random() * 5) + rangeApprox));
-//        yValues2.add(new Entry(5, (float) (Math.random() * 5) + rangeApprox));
 
         LineDataSet set2 = new LineDataSet(yValues2,"Gas Sensor 2");
+        set2.setDrawValues(false);
         set2.setCircleRadius(1);
         set2.setFillAlpha(80);
         set2.setDrawFilled(true);
@@ -388,36 +392,95 @@ public class graph_fragment extends Fragment implements AdapterView.OnItemSelect
         {
             String dataID = String.valueOf(sensorData[i].charAt(0));
             switch(dataID) {
+                // 0 = time, 1 = temp, 2 = RH, 3 = resistance, 4 = dR, 5 = ppm
+
                 case "A":
-                    sensorData[i] = "Time = " + sensorData[i].substring(1) + "ms";
+                    //sensorData[i] = "Time = " + sensorData[i].substring(1) + "ms";
+                    sensorData[i] = sensorData[i].substring(1);
                     break;
                 case "B":
-                    sensorData[i] = "Temp = " + sensorData[i].substring(1) + "deg C";
+                    //sensorData[i] = "Temp = " + sensorData[i].substring(1) + "deg C";
+                    sensorData[i] = sensorData[i].substring(1);
                     break;
                 case "C":
-                    sensorData[i] = "RH = " + sensorData[i].substring(1) + "%";
+                    //sensorData[i] = "RH = " + sensorData[i].substring(1) + "%";
+                    sensorData[i] = sensorData[i].substring(1);
                     break;
                 case "D":
-                    sensorData[i] = "R = " + sensorData[i].substring(1) + "ohm";
+                    //sensorData[i] = "R = " + sensorData[i].substring(1) + "ohm";
+                    sensorData[i] = sensorData[i].substring(1);
                     break;
                 case "E":
-                    sensorData[i] = "dR = " + sensorData[i].substring(1) + "ohm per s";
+                    //sensorData[i] = "dR = " + sensorData[i].substring(1) + "ohm per s";
+                    sensorData[i] = sensorData[i].substring(1);
                     break;
                 case "F":
-                    sensorData[i] = "Conc = " + sensorData[i].substring(1) + "ppm";
+                    //sensorData[i] = "Conc = " + sensorData[i].substring(1) + "ppm";
+                    sensorData[i] = sensorData[i].substring(1);
                     break;
             }
         }
         return sensorData;
     }
 
+    private Thread thread;
+
+    public void startGraphing() {
+        if (thread != null) {thread.interrupt();}
+        final Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                //addEntry();
+                if (graphStatus) {
+                    getData();
+                }
+            }
+        };
+        thread = new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                while (graphStatus) {
+                    // Don't generate garbage runnables inside the loop.
+                    getActivity().runOnUiThread(runnable);
+
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+        thread.start();
+    }
+
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_record:
-                //displayCount();
-                getData();
+                //showToast("1",getActivity());
+                if (graphStatus) {
+                    // DO THIS WHEN RECORDING
+                    btn_record.setBackgroundResource(R.drawable.ic_baseline_fiber_manual_record_24);
+                    graphStatus = false;
+                    //showToast("2",getActivity());
+                }
+                else {
+                    // EXIT RECORD
+                    graphStatus = true;
+                    startGraphing();
+                    //showToast("3",getActivity());
+                    btn_record.setBackgroundResource(R.drawable.ic_baseline_pause_24);
+                    btn_stop.setVisibility(getView().VISIBLE);
+                }
+                break;
+            case R.id.btn_save_record:
+                btn_record.setBackgroundResource(R.drawable.ic_baseline_fiber_manual_record_24);
+                btn_stop.setVisibility(getView().GONE);
+                graphStatus = false;
                 break;
         }
     }
+
 }
