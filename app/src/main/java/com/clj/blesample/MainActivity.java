@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -265,11 +266,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (BleManager.getInstance().isConnected(bleDevice)) {
                     if (bleDevice.getGraphStatus() == 0) {
                         bleDevice.setGraphStatus(1);
-                        showToast("Graphing Enabled");
+                        //showToast("Graphing Enabled");
                     }
                     else {
                         bleDevice.setGraphStatus(0);
-                        showToast("Graphing Disabled");
+                        //showToast("Graphing Disabled");
                     }
                     mDeviceAdapter.notifyDataSetChanged();
                 }

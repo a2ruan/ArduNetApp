@@ -5,13 +5,16 @@ import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,9 +45,13 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
+import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -94,6 +101,37 @@ public class graph_fragment extends Fragment implements View.OnClickListener {
     List<BleDevice> connectedDevices;
     Map<String, Integer> mymap;
 
+    public void exportData(View v) {
+        StringBuilder data = new StringBuilder();
+        data.append("Time,Distance");
+        for (int i = 0; i < 5; i++) {
+            data.append("\n" + String.valueOf(i)+","+String.valueOf(i*i));
+        }
+        try{
+            //saving the file into device
+            Context context = getActivity().getApplicationContext();
+            FileOutputStream out = context.openFileOutput("data.csv", Context.MODE_PRIVATE);
+            out.write((data.toString()).getBytes());
+            out.close();
+
+            //exporting
+            //context = getActivity().getApplicationContext();
+            File filelocation = new File(context.getFilesDir(), "data.csv");
+            Uri path = FileProvider.getUriForFile(context, "com.example.exportcsv.fileprovider", filelocation);
+            Intent fileIntent = new Intent(Intent.ACTION_SEND);
+            fileIntent.setType("text/csv");
+            fileIntent.putExtra(Intent.EXTRA_SUBJECT, "Data");
+            fileIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            fileIntent.putExtra(Intent.EXTRA_STREAM, path);
+            startActivity(Intent.createChooser(fileIntent, "Send mail"));
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
+
+
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     private void getData() {
         //txt_test.setText(" ");
@@ -116,6 +154,7 @@ public class graph_fragment extends Fragment implements View.OnClickListener {
                                             @Override
                                             public void onReadSuccess(final byte[] data) {
                                                 //txt_test.setText(txt_test.getText() + tempDevice.getMac());
+                                                addDevicesReminder.setVisibility(View.GONE);
                                                 if (mymap.get(tempDevice.getMac()) == null) {
                                                     //showToast(finalTempDevice.getMac());
                                                     int randomColor = getRandomColor();
@@ -141,15 +180,14 @@ public class graph_fragment extends Fragment implements View.OnClickListener {
                                                 String[] sensorData = unpackageBLEPacket(str);
                                                 //showToast(Float.toString(xValueTemp) + "s @ " + sensorData[3] + "ohm");
                                                 // 0 = time, 1 = temp, 2 = RH, 3 = resistance, 4 = dR, 5 = ppm
+
                                                 addEntry(chart1, mymap.get(tempDevice.getMac()), (float) xValueTemp,(float) Float.valueOf(sensorData[3])); // Resistance
                                                 addEntry(chart2, mymap.get(tempDevice.getMac()) , (float) xValueTemp,(float) Float.valueOf(sensorData[1])); // Temperature
                                                 addEntry(chart3, mymap.get(tempDevice.getMac()), (float) xValueTemp,(float) Float.valueOf(sensorData[2])); // Relative Humidity
                                                 addEntry(chart4, mymap.get(tempDevice.getMac()), (float) xValueTemp,(float) Float.valueOf(sensorData[5])); // Gas Concentration
-                                                xValueTemp = xValueTemp + 1;
                                             }
                                             @Override
                                             public void onReadFailure(final BleException exception) {
-
                                             }
                                         }
                                 );
@@ -202,17 +240,31 @@ public class graph_fragment extends Fragment implements View.OnClickListener {
         return v;
     }
 
+    public void resetCharts(View v) {
+        chart1 = initChart(chart1,v,R.id.chart1, 1030f);
+        chart2 = initChart(chart2,v,R.id.chart2, 21f);
+        chart3 = initChart(chart3,v,R.id.chart3, 60f);
+        chart4 = initChart(chart4,v,R.id.chart4, 400f);
+        rescaleYAxis(chart1);
+        rescaleYAxis(chart2);
+        rescaleYAxis(chart3);
+        rescaleYAxis(chart4);
+
+        xValueTemp = 0;
+        graphStatus = false;
+        displayGraphStatus = false;
+        initUI(getView());
+    }
+
+
     public void rescaleYAxis(LineChart lc) {
         lc.getAxisLeft().setAxisMaximum(lc.getYMax()+lc.getYMax()-lc.getYMin());
-
         if (lc.getYMin() > 0) {
             lc.getAxisLeft().setAxisMinimum(lc.getYMin()-(lc.getYMax()-lc.getYMin()));
         }
         else {
             lc.getAxisLeft().setAxisMinimum(0);
         }
-
-
     }
 
     private void addEntry(LineChart chartTemp, int dataSetIndex, float xVal, float yVal) {
@@ -223,10 +275,12 @@ public class graph_fragment extends Fragment implements View.OnClickListener {
                 set = createSet();
                 data.addDataSet(set);
             }
-            data.addEntry(new Entry(set.getEntryCount(), yVal),dataSetIndex);
+            //data.addEntry(new Entry(set.getEntryCount(), yVal),dataSetIndex);
+            data.addEntry(new Entry(xValueTemp, yVal),dataSetIndex);
             data.notifyDataChanged();
-            chartTemp.notifyDataSetChanged();
+
             chartTemp.setVisibleXRangeMaximum(30);
+            chartTemp.notifyDataSetChanged();
             chartTemp.moveViewToX(data.getEntryCount());
             chartTemp.moveViewTo(data.getXMax()-7, 55f, YAxis.AxisDependency.LEFT);
         }
@@ -235,11 +289,12 @@ public class graph_fragment extends Fragment implements View.OnClickListener {
     private LineDataSet createSet() {
         LineDataSet set = new LineDataSet(null, "Dynamic Data");
         set.setAxisDependency(YAxis.AxisDependency.LEFT);
+        set.setHighLightColor(Color.rgb(0,0,0));
         set.setColor(ColorTemplate.getHoloBlue());
         set.setCircleColor(Color.WHITE);
         set.setLineWidth(2f);
         set.setCircleRadius(4f);
-        set.setFillAlpha(65);
+        set.setFillAlpha(30);
         set.setFillColor(ColorTemplate.getHoloBlue());
         set.setHighLightColor(Color.rgb(244, 117, 117));
         set.setValueTextColor(Color.WHITE);
@@ -275,6 +330,25 @@ public class graph_fragment extends Fragment implements View.OnClickListener {
         chartTemp.getLegend().setTextColor(R.color.colorTextPrimary);
         chartTemp.getLegend().setForm(Legend.LegendForm.CIRCLE);
 
+
+        final LineChart finalChartTemp = chartTemp;
+        chartTemp.setOnChartValueSelectedListener(new OnChartValueSelectedListener()
+        {
+            @Override
+            public void onValueSelected(Entry e, Highlight h)
+            {
+                float x=e.getX();
+                float y=e.getY();
+                finalChartTemp.getDescription().setText("x="+Float.toString(x) + ",y=" + Float.toString(y));
+            }
+
+            @Override
+            public void onNothingSelected()
+            {
+                finalChartTemp.getDescription().setText("");
+            }
+        });
+
         Legend legend = chartTemp.getLegend();
         legend.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
         legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
@@ -286,14 +360,15 @@ public class graph_fragment extends Fragment implements View.OnClickListener {
         ArrayList<Entry> yValues = new ArrayList<>();
         yValues.add(new Entry(0, 0));
         LineDataSet set1 = new LineDataSet(yValues,"");
+        set1.setHighLightColor(Color.rgb(0,0,0));
         set1.setCircleRadius(1);
-        set1.setFillColor(Color.rgb(255,255,255));
-        set1.setCircleColor(Color.rgb(255,255,255));
-        set1.setColor(Color.rgb(255,255,255));
+        set1.setFillColor(Color.rgb(250,250,250));
+        set1.setCircleColor(Color.rgb(250,250,250));
+        set1.setColor(Color.rgb(250,250,250));
+        set1.setDrawValues(false);
         ArrayList<ILineDataSet> dataSets = new ArrayList<>();
         dataSets.add(set1);
         LineData data = new LineData(dataSets);
-        data.setDrawValues(false);
         chartTemp.setData(data);
         return chartTemp;
     }
@@ -301,23 +376,42 @@ public class graph_fragment extends Fragment implements View.OnClickListener {
     private LineDataSet initializeLineDataSet(String setName, int randomColor) {
         ArrayList<Entry> yValues = new ArrayList<>();
         LineDataSet setTemp = new LineDataSet(yValues,setName);
+        setTemp.setHighLightColor(Color.rgb(0,0,0));
         setTemp.setCircleRadius(1);
         setTemp.setFillColor(randomColor);
         setTemp.setCircleColor(randomColor);
         setTemp.setColor(randomColor);
-        setTemp.setFillAlpha(80);
+        setTemp.setLineWidth(1);
+        setTemp.setFillAlpha(30);
         setTemp.setDrawFilled(true);
+        setTemp.setDrawValues(false);
         return setTemp;
     }
 
-    private int getRandomColor() {
+    final Random mRandom = new Random(System.currentTimeMillis());
+
+    public int getRandomColor() {
         Random rand = new Random();
-        int r = rand.nextInt(255);
-        int g = rand.nextInt(255);
-        int b = rand.nextInt(255);
-        int randomColor = Color.rgb(r,g,b);
-        return randomColor;
+        int r = rand.nextInt(10);
+
+        int[] randomColor = new int[10];
+        randomColor[0] = Color.rgb(244, 67, 54);
+        randomColor[1] = Color.rgb(236, 64, 122);
+        randomColor[2] = Color.rgb(213, 0, 249);
+        randomColor[3] = Color.rgb(124, 77, 255);
+        randomColor[4] = Color.rgb(48, 79, 254);
+        randomColor[5] = Color.rgb(38, 198, 218);
+        randomColor[6] = Color.rgb(100, 255, 218);
+        randomColor[7] = Color.rgb(0, 230, 118);
+        randomColor[8] = Color.rgb(255, 214, 0);
+        randomColor[9] = Color.rgb(255, 160, 0);
+        r = r - 1;
+        if (r < 0) {r = 0;}
+        if (r > 8) {r = 9;}
+        int randomColorHolder = randomColor[r];
+        return randomColorHolder;
     }
+
 
     private void showToast (String msg) {
         Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
@@ -390,12 +484,10 @@ public class graph_fragment extends Fragment implements View.OnClickListener {
             @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
             @Override
             public void run() {
-                //addEntry();
                 if (graphStatus) {
-                    addDevicesReminder.setVisibility(View.GONE);
                     getData();
                 }
-                if (counter%5 == 0) {
+                if (counter < 10 || counter%100 == 0) {
                     rescaleYAxis(chart1);
                     rescaleYAxis(chart2);
                     rescaleYAxis(chart3);
@@ -408,11 +500,10 @@ public class graph_fragment extends Fragment implements View.OnClickListener {
             @Override
             public void run() {
                 while (graphStatus) {
-                    // Don't generate garbage runnables inside the loop.
                     getActivity().runOnUiThread(runnable);
-
                     try {
                         Thread.sleep(1000);
+                        xValueTemp = xValueTemp + 1;
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -426,18 +517,15 @@ public class graph_fragment extends Fragment implements View.OnClickListener {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_record:
-                //showToast("1",getActivity());
                 if (graphStatus) {
                     // DO THIS WHEN RECORDING
                     btn_record.setBackgroundResource(R.drawable.ic_baseline_fiber_manual_record_24);
                     graphStatus = false;
-                    //showToast("2",getActivity());
                 }
                 else {
                     // EXIT RECORD
                     graphStatus = true;
                     startGraphing();
-                    //showToast("3",getActivity());
                     btn_record.setBackgroundResource(R.drawable.ic_baseline_pause_24);
                     btn_stop.setVisibility(getView().VISIBLE);
                 }
@@ -445,7 +533,10 @@ public class graph_fragment extends Fragment implements View.OnClickListener {
             case R.id.btn_save_record:
                 btn_record.setBackgroundResource(R.drawable.ic_baseline_fiber_manual_record_24);
                 btn_stop.setVisibility(getView().GONE);
+                //exportData(getView());
+                resetCharts(getView());
                 graphStatus = false;
+                addDevicesReminder.setVisibility(View.VISIBLE);
                 break;
         }
     }
