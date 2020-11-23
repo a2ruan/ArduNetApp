@@ -1,14 +1,12 @@
-package com.clj.blesample.operation;
+package com.clj.blesamplePCBA.operation;
 
 import android.annotation.TargetApi;
 import android.bluetooth.BluetoothGattCharacteristic;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +16,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.clj.blesample.R;
+import androidx.annotation.RequiresApi;
+
+import com.clj.blesamplePCBA.R;
 import com.clj.fastble.BleManager;
 import com.clj.fastble.callback.BleIndicateCallback;
 import com.clj.fastble.callback.BleNotifyCallback;
@@ -93,6 +93,7 @@ public class CharacteristicOperationFragment extends Fragment {
                                     characteristic.getUuid().toString(),
                                     new BleReadCallback() {
 
+                                        @RequiresApi(api = Build.VERSION_CODES.KITKAT)
                                         @Override
                                         public void onReadSuccess(final byte[] data) {
                                             // DATA TESTING

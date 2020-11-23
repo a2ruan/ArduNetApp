@@ -1,4 +1,4 @@
-package com.clj.blesample.operation;
+package com.clj.blesamplePCBA.operation;
 
 
 import android.annotation.TargetApi;
@@ -19,7 +19,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.clj.blesample.R;
+import com.clj.blesamplePCBA.R;
 
 import java.util.ArrayList;
 import java.util.List;

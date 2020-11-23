@@ -1,4 +1,4 @@
-package com.clj.blesample.operation;
+package com.clj.blesamplePCBA.operation;
 
 
 import android.bluetooth.BluetoothGattCharacteristic;
@@ -12,9 +12,9 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Toast;
 
-import com.clj.blesample.R;
-import com.clj.blesample.comm.Observer;
-import com.clj.blesample.comm.ObserverManager;
+import com.clj.blesamplePCBA.R;
+import com.clj.blesamplePCBA.comm.Observer;
+import com.clj.blesamplePCBA.comm.ObserverManager;
 import com.clj.fastble.BleManager;
 import com.clj.fastble.data.BleDevice;
 

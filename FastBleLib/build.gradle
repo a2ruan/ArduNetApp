@@ -1,12 +1,14 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 26
+    compileSdkVersion 29
     buildToolsVersion '26.0.2'
-
+    lintOptions{
+        disable 'MissingTranslation'
+    }
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 22
+        targetSdkVersion 29
         versionCode 232
         versionName "2.3.2"
     }

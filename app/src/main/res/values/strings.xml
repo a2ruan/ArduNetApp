@@ -1,17 +1,15 @@
-<resources tools:ignore="ExtraTranslation" xmlns:tools="http://schemas.android.com/tools">
-
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
     <string name="app_name">Sensor Data Manager</string>
-
     <string name="notifyTitle">Prompt</string>
     <string name="gpsNotifyMsg">Current mobile phone scanning Bluetooth needs to open the positioning function</string>
     <string name="setting">Go to settings</string>
     <string name="cancel">Cancel</string>
-
     <string name="start_scan">Start scanning</string>
     <string name="stop_scan">Stop scanning</string>
     <string name="expand_search_settings">Search Filter</string>
     <string name="retrieve_search_settings">Close Filter</string>
-    <string name="connect_fail">Connection failed</string>
+    <string name="connect_fail">Connection Failed</string>
     <string name="active_disconnected">Disconnected</string>
     <string name="disconnected">Connection disconnect</string>
     <string name="please_open_blue">Please turn on Bluetooth first</string>
@@ -25,7 +23,7 @@
     <string name="service_list">Service list</string>
     <string name="characteristic_list">Characteristic list</string>
     <string name="console">Console</string>
-    <string name="name">Device broadcast name：</string>
+    <string name="name">Device broadcast name:</string>
     <string name="mac">MAC:</string>
     <string name="service">Service</string>
     <string name="type">Service type (main service)</string>
@@ -38,11 +36,8 @@
     <string name="connected">Connected</string>
     <string name="disconnect">Disconnect</string>
     <string name="enter">Enter</string>
-
     <string name="hello_blank_fragment">Ready to connect</string>
-
     <string name="title_device">Devices</string>
     <string name="title_graph">Graph</string>
     <string name="title_data">Data</string>
-
 </resources>

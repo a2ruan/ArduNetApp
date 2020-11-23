@@ -1,4 +1,4 @@
-package com.clj.blesample.adapter;
+package com.clj.blesamplePCBA.adapter;
 
 
 import android.content.Context;
@@ -11,7 +11,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.clj.blesample.R;
+import com.clj.blesamplePCBA.R;
 import com.clj.fastble.BleManager;
 import com.clj.fastble.data.BleDevice;
 

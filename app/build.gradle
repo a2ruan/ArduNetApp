@@ -1,17 +1,18 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion 29
     buildToolsVersion '27.0.3'
     lintOptions{
         disable 'MissingTranslation'
     }
     defaultConfig {
-        applicationId "com.clj.blesample"
+        applicationId "com.clj.blesamplePCBA"
         minSdkVersion 14
-        targetSdkVersion 27
-        versionCode 233
+        targetSdkVersion 29
+        versionCode 234
         versionName "2.3.3"
+        vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
 //        release {
@@ -30,10 +31,13 @@ repositories {
 }
 
 dependencies {
+    //noinspection GradleCompatible
     implementation 'com.android.support:design:27.1.1'
+    //noinspection GradleCompatible
     implementation 'com.android.support:support-v4:27.1.1'
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
+    //noinspection GradleCompatible
     compile 'com.android.support:appcompat-v7:27.1.1'
     compile project(':FastBleLib')
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'

@@ -18,7 +18,8 @@
             android:layout_marginLeft="10dp"
             android:layout_toRightOf="@id/img_blue"
             android:gravity="center_vertical"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            tools:ignore="NotSibling">
 
         </LinearLayout>
 
@@ -106,7 +107,9 @@
                 android:layout_marginStart="-60dp"
                 android:layout_marginTop="75dp"
                 android:rotation="270"
-                android:text="Resistance (Ω)"></TextView>
+                android:text="Resistance (Ω)"
+                android:gravity="center_horizontal"
+                android:layout_marginLeft="-60dp"></TextView>
 
             <TextView
                 android:id="@+id/YLabel2"
@@ -119,7 +122,9 @@
                 android:layout_marginStart="-60dp"
                 android:layout_marginTop="265dp"
                 android:rotation="270"
-                android:text="Temperature (°C)"></TextView>
+                android:text="Temperature (°C)"
+                android:layout_marginLeft="-60dp"
+                android:gravity="center_horizontal"></TextView>
 
             <TextView
                 android:id="@+id/YLabel3"
@@ -132,7 +137,9 @@
                 android:layout_marginStart="-60dp"
                 android:layout_marginTop="450dp"
                 android:rotation="270"
-                android:text="Relative Humidity (%)"></TextView>
+                android:text="Relative Humidity (%)"
+                android:layout_marginLeft="-60dp"
+                android:gravity="center_horizontal"></TextView>
 
             <TextView
                 android:id="@+id/YLabel4"
@@ -145,7 +152,9 @@
                 android:layout_marginStart="-60dp"
                 android:layout_marginTop="640dp"
                 android:rotation="270"
-                android:text="Gas Concentration (ppm)"></TextView>
+                android:text="Gas Concentration (ppm)"
+                android:gravity="center_horizontal"
+                android:layout_marginLeft="-60dp"></TextView>
 
             <com.github.mikephil.charting.charts.LineChart
                 android:id="@+id/chart1"
