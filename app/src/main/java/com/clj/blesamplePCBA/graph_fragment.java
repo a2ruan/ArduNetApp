@@ -82,8 +82,7 @@ public class graph_fragment extends Fragment implements View.OnClickListener {
     private LineChart chart11; // dR4
 
     // Store all data into 3D arraylist
-    ArrayList<String> [][][] csvData = new ArrayList[1][1][13]; // sheetName, row, column
-    // columns are datecode, timecode, temp, humidity, ppm, R1, dR1, R2, dR2, R3, dR3, R4, dR4 for a total of 13 columns
+    ArrayList<ArrayList<ArrayList<String>>> csvData;
 
     private TextView txt_test;
     private Button btn_record;
@@ -97,33 +96,45 @@ public class graph_fragment extends Fragment implements View.OnClickListener {
 
     List<BleDevice> connectedDevices;
     Map<String, Integer> mymap;
+    Map<Integer, String> mymapName;
 
-    public void exportData(View v) {
-        StringBuilder data = new StringBuilder();
-        data.append("Time,Distance");
-        for (int i = 0; i < 5; i++) {
-            data.append("\n" + String.valueOf(i)+","+String.valueOf(i*i));
-        }
-        try{
-            //saving the file into device
-            Context context = getActivity().getApplicationContext();
-            FileOutputStream out = context.openFileOutput("data.csv", Context.MODE_PRIVATE);
-            out.write((data.toString()).getBytes());
-            out.close();
+    public void exportCSV(View v, String csvDefaultName) {
+        for (int sheetID = 0; sheetID < csvData.size();sheetID++) {
+            //showToast(mymapName.get(0));
+            String csvName = mymapName.get(sheetID+1) + "_" + csvDefaultName;
+            StringBuilder data = new StringBuilder();
+            for (int rowID = 0; rowID < csvData.get(sheetID).size();rowID++) {
+                for (int columnID = 0; columnID < csvData.get(sheetID).get(rowID).size();columnID++) {
+                    if (columnID == 0) {
+                        data.append(csvData.get(sheetID).get(rowID).get(columnID));
+                    }
+                    else {
+                        data.append(","+csvData.get(sheetID).get(rowID).get(columnID));
+                    }
+                }
+                data.append("\n");
+            }
+            try{
+                //saving the file into device
+                Context context = getActivity().getApplicationContext();
+                FileOutputStream out = context.openFileOutput(csvName+".csv", Context.MODE_PRIVATE);
+                out.write((data.toString()).getBytes());
+                out.close();
 
-            //exporting
-            //context = getActivity().getApplicationContext();
-            File filelocation = new File(context.getFilesDir(), "data.csv");
-            Uri path = FileProvider.getUriForFile(context, "com.example.exportcsv.fileprovider", filelocation);
-            Intent fileIntent = new Intent(Intent.ACTION_SEND);
-            fileIntent.setType("text/csv");
-            fileIntent.putExtra(Intent.EXTRA_SUBJECT, "Data");
-            fileIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            fileIntent.putExtra(Intent.EXTRA_STREAM, path);
-            startActivity(Intent.createChooser(fileIntent, "Send mail"));
-        }
-        catch(Exception e){
-            e.printStackTrace();
+                //exporting
+                //context = getActivity().getApplicationContext();
+                File filelocation = new File(context.getFilesDir(), csvName+".csv");
+                Uri path = FileProvider.getUriForFile(context, "com.example.exportcsv.fileprovider", filelocation);
+                Intent fileIntent = new Intent(Intent.ACTION_SEND);
+                fileIntent.setType("text/csv");
+                fileIntent.putExtra(Intent.EXTRA_SUBJECT, csvName); // File Name
+                fileIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                fileIntent.putExtra(Intent.EXTRA_STREAM, path);
+                startActivity(Intent.createChooser(fileIntent, "Send mail"));
+            }
+            catch(Exception e){
+                e.printStackTrace();
+            }
         }
     }
 
@@ -154,7 +165,6 @@ public class graph_fragment extends Fragment implements View.OnClickListener {
                                                     //showToast(finalTempDevice.getMac());
                                                     int randomColor = getRandomColor();
                                                     //txt_test.setText(txt_test.getText() + tempDevice.getName() + " ");
-
                                                     ILineDataSet tempDataSet = initializeLineDataSet(tempDevice.getName(),randomColor);
                                                     chart1.getData().addDataSet(tempDataSet);
                                                     chart2.getData().addDataSet(initializeLineDataSet(tempDevice.getName(),randomColor));
@@ -168,19 +178,34 @@ public class graph_fragment extends Fragment implements View.OnClickListener {
                                                     chart10.getData().addDataSet(initializeLineDataSet(tempDevice.getName(),randomColor));
                                                     chart11.getData().addDataSet(initializeLineDataSet(tempDevice.getName(),randomColor));
                                                     dataSetIndex = chart1.getData().getDataSetCount()-1;
-
-                                                    showToast(Integer.toString(dataSetIndex));
-
+                                                    //showToast(Integer.toString(dataSetIndex));
                                                     //showToast(Integer.toString(dataSetIndex));
                                                     mymap.put(tempDevice.getMac(),dataSetIndex);
+                                                    mymapName.put(dataSetIndex,tempDevice.getName());
+                                                    //showToast(Integer.toString(dataSetIndex) + ":" + mymapName.get(dataSetIndex));
+
+                                                    ArrayList<ArrayList<String>> newSheet = new ArrayList<ArrayList<String>>();
+                                                    ArrayList<String> headers = new ArrayList<String>();
+                                                    headers.add("Date");
+                                                    headers.add("Time");
+                                                    headers.add("Temperature(°C)");
+                                                    headers.add("RelativeHumidity(%)");
+                                                    headers.add("Concentration(ppm)");
+                                                    headers.add("R1(Ω)");
+                                                    headers.add("dR1(Ω/s)");
+                                                    headers.add("R2(Ω)");
+                                                    headers.add("dR2(Ω/s)");
+                                                    headers.add("R3(Ω)");
+                                                    headers.add("dR3(Ω/s)");
+                                                    headers.add("R4(Ω)");
+                                                    headers.add("dR4(Ω/s)");
+                                                    newSheet.add(headers);
+                                                    csvData.add(dataSetIndex-1,newSheet);
                                                 }
                                                 else {
                                                     dataSetIndex = mymap.get(tempDevice.getMac());
-                                                    showToast(Integer.toString(dataSetIndex));
+                                                    //showToast(Integer.toString(dataSetIndex));
                                                 }
-                                                //showToast(Integer.toString(dataSetIndex));
-                                                //showToast(Integer.toString(mymap.size()));
-                                                //txt_test.setText(txt_test.getText() + Integer.toString(mymap.get(tempDevice.getMac())) + " ");
                                                 String str = new String(data, StandardCharsets.UTF_8);
                                                 String[] sensorData = unpackageBLEPacket(str);
                                                 //showToast(Float.toString(xValueTemp) + "s @ " + sensorData[3] + "ohm");
@@ -226,10 +251,40 @@ public class graph_fragment extends Fragment implements View.OnClickListener {
                                                     addEntry(chart9, mymap.get(tempDevice.getMac()), (float) xValueTemp,(float) Float.valueOf(sensorData[10])); // dR3
                                                     addEntry(chart10, mymap.get(tempDevice.getMac()) , (float) xValueTemp,(float) Float.valueOf(sensorData[11])); // R4
                                                     addEntry(chart11, mymap.get(tempDevice.getMac()), (float) xValueTemp,(float) Float.valueOf(sensorData[12])); // dR4
+
+                                                    // Add to dataset for eventual excel export
+                                                    SimpleDateFormat date1 = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+                                                    Date now1 = new Date();
+                                                    String currentDate = date1.format(now1);
+
+                                                    SimpleDateFormat time1 = new SimpleDateFormat("H:mm:ss", Locale.US);
+                                                    Date now2 = new Date();
+                                                    String currentTime = time1.format(now2);
+                                                    //showToast(currentDate + ":" + currentTime);
+
+                                                    // Initialize new row;
+                                                    ArrayList<String> newRow = new ArrayList<String>();
+                                                    newRow.add(currentDate);
+                                                    newRow.add(currentTime);
+                                                    newRow.add(sensorData[2]);
+                                                    newRow.add(sensorData[3]);
+                                                    newRow.add(sensorData[4]);
+                                                    newRow.add(sensorData[5]);
+                                                    newRow.add(sensorData[6]);
+                                                    newRow.add(sensorData[7]);
+                                                    newRow.add(sensorData[8]);
+                                                    newRow.add(sensorData[9]);
+                                                    newRow.add(sensorData[10]);
+                                                    newRow.add(sensorData[11]);
+                                                    newRow.add(sensorData[12]);
+                                                    csvData.get(dataSetIndex-1).add(newRow);
+                                                    //showToast(Integer.toString(csvData.get(dataSetIndex-1).size()));
+                                                    //showToast(csvData.get(0).get(1).get(1));
                                                 }
                                             }
                                             @Override
                                             public void onReadFailure(final BleException exception) {
+                                                showToast("Bluetooth unstable.  Move close to device");
                                             }
                                         }
                                 );
@@ -243,7 +298,9 @@ public class graph_fragment extends Fragment implements View.OnClickListener {
 
     private void initUI(View v) {
         characteristicList = new ArrayList<>();
+        csvData = new ArrayList<>(10);
         mymap = new HashMap<String, Integer>();
+        mymapName = new HashMap<Integer, String>();
         dataSetIndex = 0;
 
         addDevicesReminder = (RelativeLayout) v.findViewById(R.id.addDevicesReminder);
@@ -307,7 +364,6 @@ public class graph_fragment extends Fragment implements View.OnClickListener {
         displayGraphStatus = false;
         initUI(getView());
     }
-
 
     public void rescaleYAxis(LineChart lc) {
         lc.getAxisLeft().setAxisMaximum(lc.getYMax()+lc.getYMax()-lc.getYMin());
@@ -584,9 +640,8 @@ public class graph_fragment extends Fragment implements View.OnClickListener {
                 btn_record.setBackgroundResource(R.drawable.ic_baseline_fiber_manual_record_24);
                 btn_stop.setVisibility(getView().GONE);
                 //exportData(getView());
-                resetCharts(getView());
-                graphStatus = false;
                 saveDataToCSV();
+                graphStatus = false;
                 addDevicesReminder.setVisibility(View.VISIBLE);
                 addDevicesReminder.setVisibility(View.VISIBLE);
                 break;
@@ -600,9 +655,9 @@ public class graph_fragment extends Fragment implements View.OnClickListener {
         // Set an EditText view to get user input
         final EditText input = new EditText(getActivity());
 
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd(HH_mm_ss)", Locale.US);
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd(H_mm_ss)", Locale.US);
         Date now = new Date();
-        String fileName = "ArduNet_" + formatter.format(now);
+        final String fileName = formatter.format(now);
 
         input.setText(fileName);
         alert.setView(input);
@@ -610,9 +665,10 @@ public class graph_fragment extends Fragment implements View.OnClickListener {
         alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 Editable value = input.getText();
-                showToast(value.toString());
+                //showToast(value.toString());
                 // ADD CODE AFTER CONFIRMATION OF FILE SAVE
-
+                exportCSV(getView(), fileName);
+                resetCharts(getView());
             }
         });
         alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -622,6 +678,7 @@ public class graph_fragment extends Fragment implements View.OnClickListener {
                 cancelAlert.setMessage("Are you sure you don't want to save?");
                 cancelAlert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
+                        resetCharts(getView());
                     }
                 });
                 cancelAlert.setNegativeButton("No", new DialogInterface.OnClickListener() {
