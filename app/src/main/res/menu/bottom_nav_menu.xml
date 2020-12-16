@@ -12,9 +12,4 @@
         android:icon="@drawable/ic_baseline_bar_chart_24"
         android:title="@string/title_graph" />
 
-    <item
-        android:id="@+id/navigation_data"
-        android:icon="@drawable/ic_baseline_folder_open_24"
-        android:title="@string/title_data" />
-
 </menu>

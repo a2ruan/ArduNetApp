@@ -180,21 +180,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     findViewById(R.id.fragment_container).setVisibility(View.VISIBLE);
 
                     break;
-                case R.id.navigation_data:
-                    fragmentTag = "dataFragment";
-                    selectedFragment = new data_fragment();
-                    toolbarRef.setTitle(R.string.title_data);
-                    layout_setting.setVisibility(View.GONE);
-                    btn_scan.setVisibility(View.GONE);
-                    txt_setting.setVisibility(View.GONE);
-                    list_device.setVisibility(View.GONE);
-
-                    findViewById(R.id.fragment_container).setVisibility(View.GONE);
-                    if (getSupportFragmentManager().findFragmentByTag(fragmentTag) == null) {
-                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container_data,selectedFragment,fragmentTag).commit();
-                    }
-                    findViewById(R.id.fragment_container_data).setVisibility(View.VISIBLE);
-                    break;
             }
             return true;
         }
