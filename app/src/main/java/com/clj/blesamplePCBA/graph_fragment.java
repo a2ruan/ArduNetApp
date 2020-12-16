@@ -69,17 +69,21 @@ public class graph_fragment extends Fragment implements View.OnClickListener {
     private float currentTime;
     private int dataSetIndex;
 
-    private LineChart chart1; // R1
-    private LineChart chart2; // Temp
-    private LineChart chart3; // Humidity
-    private LineChart chart4; // PPM
-    private LineChart chart5; // R2
-    private LineChart chart6; // R3
-    private LineChart chart7; // R4
-    private LineChart chart8; // dR1
-    private LineChart chart9; // dR2
-    private LineChart chart10; // dR3
+    private LineChart chart1; // Temp
+    private LineChart chart2; // Humidity
+    private LineChart chart3; // PPM
+    private LineChart chart4; // R1
+    private LineChart chart5; // dR1
+    private LineChart chart6; // R2
+    private LineChart chart7; // dR2
+    private LineChart chart8; // R3
+    private LineChart chart9; // dR3
+    private LineChart chart10; // R4
     private LineChart chart11; // dR4
+
+    // Store all data into 3D arraylist
+    ArrayList<String> [][][] csvData = new ArrayList[1][1][13]; // sheetName, row, column
+    // columns are datecode, timecode, temp, humidity, ppm, R1, dR1, R2, dR2, R3, dR3, R4, dR4 for a total of 13 columns
 
     private TextView txt_test;
     private Button btn_record;
@@ -156,13 +160,23 @@ public class graph_fragment extends Fragment implements View.OnClickListener {
                                                     chart2.getData().addDataSet(initializeLineDataSet(tempDevice.getName(),randomColor));
                                                     chart3.getData().addDataSet(initializeLineDataSet(tempDevice.getName(),randomColor));
                                                     chart4.getData().addDataSet(initializeLineDataSet(tempDevice.getName(),randomColor));
+                                                    chart5.getData().addDataSet(initializeLineDataSet(tempDevice.getName(),randomColor));
+                                                    chart6.getData().addDataSet(initializeLineDataSet(tempDevice.getName(),randomColor));
+                                                    chart7.getData().addDataSet(initializeLineDataSet(tempDevice.getName(),randomColor));
+                                                    chart8.getData().addDataSet(initializeLineDataSet(tempDevice.getName(),randomColor));
+                                                    chart9.getData().addDataSet(initializeLineDataSet(tempDevice.getName(),randomColor));
+                                                    chart10.getData().addDataSet(initializeLineDataSet(tempDevice.getName(),randomColor));
+                                                    chart11.getData().addDataSet(initializeLineDataSet(tempDevice.getName(),randomColor));
                                                     dataSetIndex = chart1.getData().getDataSetCount()-1;
+
+                                                    showToast(Integer.toString(dataSetIndex));
 
                                                     //showToast(Integer.toString(dataSetIndex));
                                                     mymap.put(tempDevice.getMac(),dataSetIndex);
                                                 }
                                                 else {
                                                     dataSetIndex = mymap.get(tempDevice.getMac());
+                                                    showToast(Integer.toString(dataSetIndex));
                                                 }
                                                 //showToast(Integer.toString(dataSetIndex));
                                                 //showToast(Integer.toString(mymap.size()));
@@ -170,22 +184,48 @@ public class graph_fragment extends Fragment implements View.OnClickListener {
                                                 String str = new String(data, StandardCharsets.UTF_8);
                                                 String[] sensorData = unpackageBLEPacket(str);
                                                 //showToast(Float.toString(xValueTemp) + "s @ " + sensorData[3] + "ohm");
-                                                // 0 = time, 1 = temp, 2 = RH, 3 = resistance, 4 = dR, 5 = ppm
+//                                                    dataPacket = dataPacket + "A" + (String)deviceName + "/";
+//                                                    dataPacket = dataPacket + "B" + (String)relativeTime + "/";
+//                                                    dataPacket = dataPacket + "C" + (String)temperature + "/";
+//                                                    dataPacket = dataPacket + "D" + (String)humidity + "/";
+//                                                    dataPacket = dataPacket + "E" + (String)ppm + "/";
+//                                                    dataPacket = dataPacket + "F" + (String)resistance[0] + "/";
+//                                                    dataPacket = dataPacket + "G" + (String)deltaResistance[0] + "/";
+//                                                    dataPacket = dataPacket + "H" + (String)resistance[1] + "/";
+//                                                    dataPacket = dataPacket + "I" + (String)deltaResistance[1] + "/";
+//                                                    dataPacket = dataPacket + "J" + (String)resistance[2] + "/";
+//                                                    dataPacket = dataPacket + "K" + (String)deltaResistance[2] + "/";
+//                                                    dataPacket = dataPacket + "L" + (String)resistance[3] + "/";
+//                                                    dataPacket = dataPacket + "M" + (String)deltaResistance[3];
                                                 int dataChecker = 0;
-                                                try { // Check to see that inputs are valid
-                                                    Float.valueOf(sensorData[5]);
+                                                try { // Check to see that inputs are valid numbers, otherwise skip the entire packet or else will crash
                                                     Float.valueOf(sensorData[2]);
                                                     Float.valueOf(sensorData[3]);
                                                     Float.valueOf(sensorData[4]);
+                                                    Float.valueOf(sensorData[5]);
+                                                    Float.valueOf(sensorData[6]);
+                                                    Float.valueOf(sensorData[7]);
+                                                    Float.valueOf(sensorData[8]);
+                                                    Float.valueOf(sensorData[9]);
+                                                    Float.valueOf(sensorData[10]);
+                                                    Float.valueOf(sensorData[11]);
+                                                    Float.valueOf(sensorData[12]);
                                                     dataChecker = 1;
                                                 }
                                                 catch (Exception e) {
                                                 }
                                                 if (dataChecker == 1) { // If floats all converted properly and exist, then add to chart display
-                                                    addEntry(chart1, mymap.get(tempDevice.getMac()), (float) xValueTemp,(float) Float.valueOf(sensorData[5])); // Resistance
-                                                    addEntry(chart2, mymap.get(tempDevice.getMac()) , (float) xValueTemp,(float) Float.valueOf(sensorData[2])); // Temperature
-                                                    addEntry(chart3, mymap.get(tempDevice.getMac()), (float) xValueTemp,(float) Float.valueOf(sensorData[3])); // Relative Humidity
-                                                    addEntry(chart4, mymap.get(tempDevice.getMac()), (float) xValueTemp,(float) Float.valueOf(sensorData[4])); // Gas Concentration
+                                                    addEntry(chart1, mymap.get(tempDevice.getMac()), (float) xValueTemp,(float) Float.valueOf(sensorData[2])); // Temp
+                                                    addEntry(chart2, mymap.get(tempDevice.getMac()) , (float) xValueTemp,(float) Float.valueOf(sensorData[3])); // Humidity
+                                                    addEntry(chart3, mymap.get(tempDevice.getMac()), (float) xValueTemp,(float) Float.valueOf(sensorData[4])); // Concentration
+                                                    addEntry(chart4, mymap.get(tempDevice.getMac()), (float) xValueTemp,(float) Float.valueOf(sensorData[5])); // R1
+                                                    addEntry(chart5, mymap.get(tempDevice.getMac()), (float) xValueTemp,(float) Float.valueOf(sensorData[6])); // dR1
+                                                    addEntry(chart6, mymap.get(tempDevice.getMac()) , (float) xValueTemp,(float) Float.valueOf(sensorData[7])); // R2
+                                                    addEntry(chart7, mymap.get(tempDevice.getMac()), (float) xValueTemp,(float) Float.valueOf(sensorData[8])); // dR2
+                                                    addEntry(chart8, mymap.get(tempDevice.getMac()), (float) xValueTemp,(float) Float.valueOf(sensorData[9])); // R3
+                                                    addEntry(chart9, mymap.get(tempDevice.getMac()), (float) xValueTemp,(float) Float.valueOf(sensorData[10])); // dR3
+                                                    addEntry(chart10, mymap.get(tempDevice.getMac()) , (float) xValueTemp,(float) Float.valueOf(sensorData[11])); // R4
+                                                    addEntry(chart11, mymap.get(tempDevice.getMac()), (float) xValueTemp,(float) Float.valueOf(sensorData[12])); // dR4
                                                 }
                                             }
                                             @Override
@@ -230,57 +270,37 @@ public class graph_fragment extends Fragment implements View.OnClickListener {
         initUI(v);
 
         if (savedInstanceState == null) {
-            chart1 = initChart(chart1,v,R.id.chart1, 1030f);
-            chart2 = initChart(chart2,v,R.id.chart2, 21f);
-            chart3 = initChart(chart3,v,R.id.chart3, 60f);
-            chart4 = initChart(chart4,v,R.id.chart4, 400f);
-            chart5 = initChart(chart4,v,R.id.chart5, 400f);
-            chart6 = initChart(chart4,v,R.id.chart6, 400f);
-            chart7 = initChart(chart4,v,R.id.chart7, 400f);
-            chart8 = initChart(chart4,v,R.id.chart8, 400f);
-            chart9 = initChart(chart4,v,R.id.chart9, 400f);
-            chart10 = initChart(chart4,v,R.id.chart10, 400f);
-            chart11 = initChart(chart4,v,R.id.chart11, 400f);
+            chart1 = initChart(chart1,v,R.id.chart1, 21f);
+            chart2 = initChart(chart2,v,R.id.chart2, 60f);
+            chart3 = initChart(chart3,v,R.id.chart3, 400f);
+            chart4 = initChart(chart4,v,R.id.chart4, 1000f);
+            chart5 = initChart(chart5,v,R.id.chart5, 1f);
+            chart6 = initChart(chart6,v,R.id.chart6, 1000f);
+            chart7 = initChart(chart7,v,R.id.chart7, 1f);
+            chart8 = initChart(chart8,v,R.id.chart8, 1000f);
+            chart9 = initChart(chart9,v,R.id.chart9, 1f);
+            chart10 = initChart(chart10,v,R.id.chart10, 1000f);
+            chart11 = initChart(chart11,v,R.id.chart11, 1f);
 
-            rescaleYAxis(chart1);
-            //rescaleYAxis(chart2);
-            rescaleYAxis(chart3);
-            rescaleYAxis(chart4);
-            rescaleYAxis(chart5);
-            rescaleYAxis(chart6);
-            rescaleYAxis(chart7);
-            rescaleYAxis(chart8);
-            rescaleYAxis(chart9);
-            rescaleYAxis(chart10);
-            rescaleYAxis(chart11);
+            rescaleAllCharts();
         }
         return v;
     }
 
     public void resetCharts(View v) {
-        chart1 = initChart(chart1,v,R.id.chart1, 1030f);
-        chart2 = initChart(chart2,v,R.id.chart2, 21f);
-        chart3 = initChart(chart3,v,R.id.chart3, 60f);
-        chart4 = initChart(chart4,v,R.id.chart4, 400f);
-        chart5 = initChart(chart5,v,R.id.chart5, 400f);
-        chart6 = initChart(chart6,v,R.id.chart6, 400f);
-        chart7 = initChart(chart7,v,R.id.chart7, 400f);
-        chart8 = initChart(chart8,v,R.id.chart8, 400f);
-        chart9 = initChart(chart9,v,R.id.chart9, 400f);
-        chart10 = initChart(chart10,v,R.id.chart10, 400f);
-        chart11 = initChart(chart11,v,R.id.chart11, 400f);
+        chart1 = initChart(chart1,v,R.id.chart1, 21f);
+        chart2 = initChart(chart2,v,R.id.chart2, 60f);
+        chart3 = initChart(chart3,v,R.id.chart3, 400f);
+        chart4 = initChart(chart4,v,R.id.chart4, 1000f);
+        chart5 = initChart(chart5,v,R.id.chart5, 1f);
+        chart6 = initChart(chart6,v,R.id.chart6, 1000f);
+        chart7 = initChart(chart7,v,R.id.chart7, 1f);
+        chart8 = initChart(chart8,v,R.id.chart8, 1000f);
+        chart9 = initChart(chart9,v,R.id.chart9, 1f);
+        chart10 = initChart(chart10,v,R.id.chart10, 1000f);
+        chart11 = initChart(chart11,v,R.id.chart11, 1f);
 
-        rescaleYAxis(chart1);
-        //rescaleYAxis(chart2);
-        rescaleYAxis(chart3);
-        rescaleYAxis(chart4);
-        rescaleYAxis(chart5);
-        rescaleYAxis(chart6);
-        rescaleYAxis(chart7);
-        rescaleYAxis(chart8);
-        rescaleYAxis(chart9);
-        rescaleYAxis(chart10);
-        rescaleYAxis(chart11);
+        rescaleAllCharts();
 
         xValueTemp = 0;
         graphStatus = false;
@@ -297,6 +317,20 @@ public class graph_fragment extends Fragment implements View.OnClickListener {
         else {
             lc.getAxisLeft().setAxisMinimum(0);
         }
+    }
+
+    public void rescaleAllCharts() {
+        //rescaleYAxis(chart1);
+        rescaleYAxis(chart2);
+        rescaleYAxis(chart3);
+        rescaleYAxis(chart4);
+        //rescaleYAxis(chart5);
+        rescaleYAxis(chart6);
+        //rescaleYAxis(chart7);
+        rescaleYAxis(chart8);
+        //rescaleYAxis(chart9);
+        rescaleYAxis(chart10);
+        //rescaleYAxis(chart11);
     }
 
     private void addEntry(LineChart chartTemp, int dataSetIndex, float xVal, float yVal) {
@@ -507,10 +541,7 @@ public class graph_fragment extends Fragment implements View.OnClickListener {
                     getData();
                 }
                 if (counter < 10 || counter%100 == 0) {
-                    rescaleYAxis(chart1);
-                    //rescaleYAxis(chart2);
-                    rescaleYAxis(chart3);
-                    rescaleYAxis(chart4);
+                    rescaleAllCharts();
                 }
                 counter=counter + 1;
             }
