@@ -1,19 +1,24 @@
 package com.clj.blesamplePCBA;
 
+import android.app.AlertDialog;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.FileProvider;
+import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,9 +43,12 @@ import com.github.mikephil.charting.utils.ColorTemplate;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
@@ -61,10 +69,17 @@ public class graph_fragment extends Fragment implements View.OnClickListener {
     private float currentTime;
     private int dataSetIndex;
 
-    private LineChart chart1;
-    private LineChart chart2;
-    private LineChart chart3;
-    private LineChart chart4;
+    private LineChart chart1; // R1
+    private LineChart chart2; // Temp
+    private LineChart chart3; // Humidity
+    private LineChart chart4; // PPM
+    private LineChart chart5; // R2
+    private LineChart chart6; // R3
+    private LineChart chart7; // R4
+    private LineChart chart8; // dR1
+    private LineChart chart9; // dR2
+    private LineChart chart10; // dR3
+    private LineChart chart11; // dR4
 
     private TextView txt_test;
     private Button btn_record;
@@ -107,8 +122,6 @@ public class graph_fragment extends Fragment implements View.OnClickListener {
             e.printStackTrace();
         }
     }
-
-
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     private void getData() {
@@ -158,11 +171,22 @@ public class graph_fragment extends Fragment implements View.OnClickListener {
                                                 String[] sensorData = unpackageBLEPacket(str);
                                                 //showToast(Float.toString(xValueTemp) + "s @ " + sensorData[3] + "ohm");
                                                 // 0 = time, 1 = temp, 2 = RH, 3 = resistance, 4 = dR, 5 = ppm
-
-                                                addEntry(chart1, mymap.get(tempDevice.getMac()), (float) xValueTemp,(float) Float.valueOf(sensorData[3])); // Resistance
-                                                addEntry(chart2, mymap.get(tempDevice.getMac()) , (float) xValueTemp,(float) Float.valueOf(sensorData[1])); // Temperature
-                                                addEntry(chart3, mymap.get(tempDevice.getMac()), (float) xValueTemp,(float) Float.valueOf(sensorData[2])); // Relative Humidity
-                                                addEntry(chart4, mymap.get(tempDevice.getMac()), (float) xValueTemp,(float) Float.valueOf(sensorData[5])); // Gas Concentration
+                                                int dataChecker = 0;
+                                                try { // Check to see that inputs are valid
+                                                    Float.valueOf(sensorData[5]);
+                                                    Float.valueOf(sensorData[2]);
+                                                    Float.valueOf(sensorData[3]);
+                                                    Float.valueOf(sensorData[4]);
+                                                    dataChecker = 1;
+                                                }
+                                                catch (Exception e) {
+                                                }
+                                                if (dataChecker == 1) { // If floats all converted properly and exist, then add to chart display
+                                                    addEntry(chart1, mymap.get(tempDevice.getMac()), (float) xValueTemp,(float) Float.valueOf(sensorData[5])); // Resistance
+                                                    addEntry(chart2, mymap.get(tempDevice.getMac()) , (float) xValueTemp,(float) Float.valueOf(sensorData[2])); // Temperature
+                                                    addEntry(chart3, mymap.get(tempDevice.getMac()), (float) xValueTemp,(float) Float.valueOf(sensorData[3])); // Relative Humidity
+                                                    addEntry(chart4, mymap.get(tempDevice.getMac()), (float) xValueTemp,(float) Float.valueOf(sensorData[4])); // Gas Concentration
+                                                }
                                             }
                                             @Override
                                             public void onReadFailure(final BleException exception) {
@@ -210,10 +234,25 @@ public class graph_fragment extends Fragment implements View.OnClickListener {
             chart2 = initChart(chart2,v,R.id.chart2, 21f);
             chart3 = initChart(chart3,v,R.id.chart3, 60f);
             chart4 = initChart(chart4,v,R.id.chart4, 400f);
+            chart5 = initChart(chart4,v,R.id.chart5, 400f);
+            chart6 = initChart(chart4,v,R.id.chart6, 400f);
+            chart7 = initChart(chart4,v,R.id.chart7, 400f);
+            chart8 = initChart(chart4,v,R.id.chart8, 400f);
+            chart9 = initChart(chart4,v,R.id.chart9, 400f);
+            chart10 = initChart(chart4,v,R.id.chart10, 400f);
+            chart11 = initChart(chart4,v,R.id.chart11, 400f);
+
             rescaleYAxis(chart1);
-            rescaleYAxis(chart2);
+            //rescaleYAxis(chart2);
             rescaleYAxis(chart3);
             rescaleYAxis(chart4);
+            rescaleYAxis(chart5);
+            rescaleYAxis(chart6);
+            rescaleYAxis(chart7);
+            rescaleYAxis(chart8);
+            rescaleYAxis(chart9);
+            rescaleYAxis(chart10);
+            rescaleYAxis(chart11);
         }
         return v;
     }
@@ -223,10 +262,25 @@ public class graph_fragment extends Fragment implements View.OnClickListener {
         chart2 = initChart(chart2,v,R.id.chart2, 21f);
         chart3 = initChart(chart3,v,R.id.chart3, 60f);
         chart4 = initChart(chart4,v,R.id.chart4, 400f);
+        chart5 = initChart(chart5,v,R.id.chart5, 400f);
+        chart6 = initChart(chart6,v,R.id.chart6, 400f);
+        chart7 = initChart(chart7,v,R.id.chart7, 400f);
+        chart8 = initChart(chart8,v,R.id.chart8, 400f);
+        chart9 = initChart(chart9,v,R.id.chart9, 400f);
+        chart10 = initChart(chart10,v,R.id.chart10, 400f);
+        chart11 = initChart(chart11,v,R.id.chart11, 400f);
+
         rescaleYAxis(chart1);
-        rescaleYAxis(chart2);
+        //rescaleYAxis(chart2);
         rescaleYAxis(chart3);
         rescaleYAxis(chart4);
+        rescaleYAxis(chart5);
+        rescaleYAxis(chart6);
+        rescaleYAxis(chart7);
+        rescaleYAxis(chart8);
+        rescaleYAxis(chart9);
+        rescaleYAxis(chart10);
+        rescaleYAxis(chart11);
 
         xValueTemp = 0;
         graphStatus = false;
@@ -423,31 +477,18 @@ public class graph_fragment extends Fragment implements View.OnClickListener {
 
     private static String[] unpackageBLEPacket(String packetData)
     {
-        String[] sensorData = packetData.split("/");
-        for (int i = 0;i < sensorData.length;i++)
-        {
-            String dataID = String.valueOf(sensorData[i].charAt(0));
-            switch(dataID) {
-                // 0 = time, 1 = temp, 2 = RH, 3 = resistance, 4 = dR, 5 = ppm
-                case "A":
-                    sensorData[i] = sensorData[i].substring(1);
-                    break;
-                case "B":
-                    sensorData[i] = sensorData[i].substring(1);
-                    break;
-                case "C":
-                    sensorData[i] = sensorData[i].substring(1);
-                    break;
-                case "D":
-                    sensorData[i] = sensorData[i].substring(1);
-                    break;
-                case "E":
-                    sensorData[i] = sensorData[i].substring(1);
-                    break;
-                case "F":
-                    sensorData[i] = sensorData[i].substring(1);
-                    break;
+        String[] sensorData;
+        try {
+            sensorData = packetData.split("/");
+            for (int i = 0; i < sensorData.length; i++) {
+                sensorData[i] = sensorData[i].substring(1);
             }
+        }
+        catch (Exception ee) {
+            String[] errorHolder = new String[2];
+            errorHolder[0] = "Array";
+            errorHolder[1] = "Failed";
+            sensorData = errorHolder;
         }
         return sensorData;
     }
@@ -467,7 +508,7 @@ public class graph_fragment extends Fragment implements View.OnClickListener {
                 }
                 if (counter < 10 || counter%100 == 0) {
                     rescaleYAxis(chart1);
-                    rescaleYAxis(chart2);
+                    //rescaleYAxis(chart2);
                     rescaleYAxis(chart3);
                     rescaleYAxis(chart4);
                 }
@@ -514,8 +555,52 @@ public class graph_fragment extends Fragment implements View.OnClickListener {
                 //exportData(getView());
                 resetCharts(getView());
                 graphStatus = false;
+                saveDataToCSV();
+                addDevicesReminder.setVisibility(View.VISIBLE);
                 addDevicesReminder.setVisibility(View.VISIBLE);
                 break;
         }
+    }
+
+    public void saveDataToCSV() {
+        AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+        alert.setTitle("File Name");
+        alert.setMessage("Save file as:");
+        // Set an EditText view to get user input
+        final EditText input = new EditText(getActivity());
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd(HH_mm_ss)", Locale.US);
+        Date now = new Date();
+        String fileName = "ArduNet_" + formatter.format(now);
+
+        input.setText(fileName);
+        alert.setView(input);
+
+        alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                Editable value = input.getText();
+                showToast(value.toString());
+                // ADD CODE AFTER CONFIRMATION OF FILE SAVE
+
+            }
+        });
+        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                AlertDialog.Builder cancelAlert = new AlertDialog.Builder(getActivity());
+                cancelAlert.setTitle("Confirm data deletion");
+                cancelAlert.setMessage("Are you sure you don't want to save?");
+                cancelAlert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                    }
+                });
+                cancelAlert.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        saveDataToCSV();
+                    }
+                });
+                cancelAlert.show();
+            }
+        });
+        alert.show();
     }
 }

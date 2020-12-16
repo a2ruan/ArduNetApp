@@ -402,22 +402,43 @@ public class CharacteristicOperationFragment extends Fragment {
             String dataID = String.valueOf(sensorData[i].charAt(0));
             switch(dataID) {
                 case "A":
-                    sensorData[i] = "Time = " + sensorData[i].substring(1) + "ms";
+                    sensorData[i] = "DeviceName = " + sensorData[i].substring(1);
                     break;
                 case "B":
-                    sensorData[i] = "Temp = " + sensorData[i].substring(1) + "deg C";
+                    sensorData[i] = "RelativeTime = " + sensorData[i].substring(1) + "ms";
                     break;
                 case "C":
-                    sensorData[i] = "RH = " + sensorData[i].substring(1) + "%";
+                    sensorData[i] = "Temperature = " + sensorData[i].substring(1) + "C";
                     break;
                 case "D":
-                    sensorData[i] = "R = " + sensorData[i].substring(1) + "ohm";
+                    sensorData[i] = "Humidity = " + sensorData[i].substring(1) + "%";
                     break;
                 case "E":
-                    sensorData[i] = "dR = " + sensorData[i].substring(1) + "ohm per s";
+                    sensorData[i] = "ppm = " + sensorData[i].substring(1) + "ppm";
                     break;
                 case "F":
-                    sensorData[i] = "Conc = " + sensorData[i].substring(1) + "ppm";
+                    sensorData[i] = "R1 = " + sensorData[i].substring(1) + "ohm";
+                    break;
+                case "G":
+                    sensorData[i] = "dR1 = " + sensorData[i].substring(1) + "ohm/s";
+                    break;
+                case "H":
+                    sensorData[i] = "R2 = " + sensorData[i].substring(1) + "ohm";
+                    break;
+                case "I":
+                    sensorData[i] = "dR2 = " + sensorData[i].substring(1) + "ohm/s";
+                    break;
+                case "J":
+                    sensorData[i] = "R3 = " + sensorData[i].substring(1) + "ohm";
+                    break;
+                case "K":
+                    sensorData[i] = "dR3 = " + sensorData[i].substring(1) + "ohm/s";
+                    break;
+                case "L":
+                    sensorData[i] = "R4 = " + sensorData[i].substring(1) + "ohm";
+                    break;
+                case "M":
+                    sensorData[i] = "dR4 = " + sensorData[i].substring(1) + "ohm/s";
                     break;
             }
         }

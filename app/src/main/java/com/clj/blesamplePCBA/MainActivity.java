@@ -95,12 +95,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //I added this if statement to keep the selected fragment when rotating the device
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,new device_fragment(),"deviceFragment").commit();
-
         }
 
         // FILTER BY DEFAULT "GAS SENSOR"
-        et_name = (EditText) findViewById(R.id.et_name);
-        et_name.setText("Gas Sensor");
+        //et_name = (EditText) findViewById(R.id.et_name);
+        //et_name.setText("Gas Sensor");
     }
 
     protected void updateGraph() {
