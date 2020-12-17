@@ -19,7 +19,8 @@ Scan for devices | Pair Devices | Graph Data | Save to Drives
 
 # File Saving
 After recording data, the files will automatically be saved in the following format:\
-Example: `ESP32_10-30-2020(9_30_02).csv` \\ 
+Example: `ESP32_10-30-2020(9_30_02).csv` \
+\
 ESP32 is the device name, 10-30-2020 is the date, and 9_30_02 corresponds to 9:30:02 military time.  These values will change depending on the packet transmitted. 
 
 ## Analyze BLE Packet Tool 
@@ -39,7 +40,8 @@ https://github.com/a2ruan/ESP32-Sensor-Array
 ## Characteristic Packet Format
 Broadcast the BLE packet with the following packet format\
 `AXXX/BXXX/CXXX/DXXX/EXXX/FXXX/GXXX/HXXX/IXXX/JXXX/KXXX/LXXX/MXXX`
-\\
+\
+\
 Each packet is delimited using a `/` character and is uniquely identified by a letter ranging from A to M.  \
 `XXX` represents the value associated with the letter ID.
 
