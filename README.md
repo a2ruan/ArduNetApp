@@ -1,4 +1,4 @@
-![Alt Text](url)
+![Alt Text](/app/src/github/Banner v1.jpg)
 
 # ArduNet
 ArduNet is an android application designed to graph sensor data using BLE (bluetooth low-energy). 
