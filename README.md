@@ -26,15 +26,15 @@ Scan for devices | Pair Devices | Find Characteristic | Analyze BLE Packet
 ## Set up Service and Characteristic
 Set your Bluetooth device to transmit the packet under the following default service and characteristic UUID.  The app will only display data if it matches these UUIDs.
 * Service UUID: `4fafc201-1fb5-459e-8fcc-c5c9c331914b`
-* Characteristic UUID: `beb5483e-36e1-4688-b7f5-ea07361b26a8` \ 
+* Characteristic UUID: `beb5483e-36e1-4688-b7f5-ea07361b26a8` 
 \
 For instructions on how to set up your Arduino to broadcast BLE:
 https://github.com/a2ruan/ESP32-Sensor-Array
 
 ## Characteristic Packet Format
 Broadcast the BLE packet with the following packet format\
-`AXXX/BXXX/CXXX/DXXX/EXXX/FXXX/GXXX/HXXX/IXXX/JXXX/KXXX/LXXX/MXXX`\
-
+`AXXX/BXXX/CXXX/DXXX/EXXX/FXXX/GXXX/HXXX/IXXX/JXXX/KXXX/LXXX/MXXX`
+\
 Each packet is delimited using a `/` character and is uniquely identified by a letter ranging from A to M.  \
 `XXX` represents the value associated with the letter ID.
 
