@@ -1,7 +1,7 @@
 <img src="/app/src/github/Banner_v1.jpg" alt="ArduNet Banner" width="500px" height="auto">
 
 # ArduNet
-ArduNet is an android application designed to graph sensor data using BLE (bluetooth low-energy). 
+ArduNet is an android application designed to graph sensor data using BLE (bluetooth low-energy). This application was designed to work with the ESP 32 LoRa V2 microcontroller, but is also compatible with any device with a BLE chip capable of braodcasting.
 
 # Features
 * Scan for nearby Bluetooth devices
@@ -22,11 +22,14 @@ Scan for devices | Pair Devices | Find Characteristic | Analyze BLE Packet
 --- | --- | --- | ---
 <img src="/app/src/github/Scanned.jpg" alt="Scan for devices" width="auto" height="300px">|<img src="/app/src/github/Connected_Devices.jpg" alt="Graph Data" width="auto" height="300px">|<img src="/app/src/github/Debug_Mode.jpg" alt="Debug Mode" width="auto" height="300px">|<img src="/app/src/github/Debug_Detailed.jpg" alt="Analyze Packet" width="auto" height="300px">
 
-# Code
+# How to Use
 ## Set up Service and Characteristic
 Set your Bluetooth device to transmit the packet under the following default service and characteristic UUID.  The app will only display data if it matches these UUIDs.
 * Service UUID: `4fafc201-1fb5-459e-8fcc-c5c9c331914b`
-* Characteristic UUID: `beb5483e-36e1-4688-b7f5-ea07361b26a8`
+* Characteristic UUID: `beb5483e-36e1-4688-b7f5-ea07361b26a8` \ 
+\
+For instructions on how to set up your Arduino to broadcast BLE:
+https://github.com/a2ruan/ESP32-Sensor-Array
 
 ## Characteristic Packet Format
 Broadcast the BLE packet with the following packet format\
