@@ -15,7 +15,6 @@
     <uses-feature android:name="android.hardware.location"
         android:required="true"/>
 
-
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -23,7 +22,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name="com.clj.blesamplePCBA.MainActivity" android:label="Devices">
+        <activity android:name="com.clj.blesamplePCBA.MainActivity" android:label="ArduNet">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

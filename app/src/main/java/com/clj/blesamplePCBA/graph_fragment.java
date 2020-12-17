@@ -140,7 +140,6 @@ public class graph_fragment extends Fragment implements View.OnClickListener {
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     private void getData() {
-        //txt_test.setText(" ");
         connectedDeviceAdapter = ((MainActivity)getActivity()).getDeviceAdapter();
         for (int ii = 0; ii < connectedDeviceAdapter.getCount();ii++) {
             final BleDevice tempDevice = connectedDeviceAdapter.getItem(ii); // Get BLE devices from connected list

@@ -119,8 +119,8 @@ public class DeviceAdapter extends BaseAdapter {
             holder.txt_rssi.setText(String.valueOf(rssi));
             if (isConnected) {
 
-                holder.txt_name.setTextColor(Color.rgb(0, 162, 237));
-                holder.txt_mac.setTextColor(Color.rgb(0, 162, 237));
+                holder.txt_name.setTextColor(Color.rgb(51, 91, 210));
+                holder.txt_mac.setTextColor(Color.rgb(51, 91, 210));
                 holder.layout_idle.setVisibility(View.GONE);
                 holder.layout_connected.setVisibility(View.VISIBLE);
                 if (getGraphStatus == 1) {
