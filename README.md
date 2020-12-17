@@ -41,4 +41,4 @@ Each packet is delimited using a `/` character and is uniquely identified by a l
 A | B | C | D | E | F | G | H | I | J | K | L | M
 --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- 
 string | integer | double | double | double | double | double | double | double | double | double | double | double 
-
+Device Name | Time | Temperature | Humidity | Concentration |Resistance 1 | Delta Resistance 1 | Resistance 2 | Delta Resistance 2 | Resistance 3 | Delta Resistance 3 | Resistance 4 | Delta Resistance 4 
