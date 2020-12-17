@@ -1,5 +1,7 @@
+![Alt Text](url)
+
 # ArduNet
-ArduNet is an android application designed to graph sensor data using BLE (bluetooth low energy).
+ArduNet is an android application designed to graph sensor data using BLE (bluetooth low-energy). 
 
 # Features
 * Scan for nearby Bluetooth devices
@@ -9,4 +11,5 @@ ArduNet is an android application designed to graph sensor data using BLE (bluet
 Demo: https://bit.ly/3h1fG3k
 
 # Demo
-## Read 
+### Scan for devices
+
