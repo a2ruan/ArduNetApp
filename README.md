@@ -9,6 +9,7 @@ ArduNet is an android application designed to graph sensor data using BLE (bluet
 * Export .csv files to Gmail, Outlook or Google Drives
 
 Demo: https://bit.ly/3h1fG3k
+Download APK: https://bit.ly/3nuJkQP 
 
 # Demo
 ## Collect and save Sensor Data using BLE
