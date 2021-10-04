@@ -1,7 +1,7 @@
 <img src="/app/src/github/Banner_v1.jpg" alt="ArduNet Banner" width="500px" height="auto">
 
 # ArduNet
-ArduNet is an android application designed to graph sensor data using BLE (bluetooth low-energy). This application was designed to work with the ESP 32 LoRa V2 microcontroller, but is also compatible with any device with a BLE chip capable of braodcasting.
+ArduNet is an android application designed to graph sensor data using BLE (bluetooth low-energy). This application was designed to work with the ESP 32 LoRa V2 microcontroller, but is also compatible with any device with a BLE chip capable of broadcasting.
 \
 Graphing is done on a seperate multi-threaded process, enabling data recording in the background even when app is not in focus.
 
