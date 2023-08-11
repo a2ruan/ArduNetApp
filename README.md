@@ -13,7 +13,7 @@ Demo: https://bit.ly/3h1fG3k  \
 Download APK: https://bit.ly/3nuJkQP 
 
 # Paired Device
-A 2-piece PCB featuring high-speed ADCs, band-pass filters and Bluetooth/LoRA modules acts as the device to be mounted onto a drone.
+A 2-piece PCB featuring high-speed ADCs, band-pass filters and Bluetooth/LoRA modules acts as the device to be mounted onto a drone. \
 <img src="/app/src/github/PCB_assembly.PNG" alt="ArduNet Banner" width="250px" height="auto">
 <img src="/app/src/github/SW_assembly.PNG" alt="ArduNet Banner" width="250px" height="auto">
 
