@@ -30,15 +30,10 @@ Graphing is done on a seperate multi-threaded process, enabling data recording i
 * Record sensor data (x,y) into .csv format
 * Export .csv files to Gmail, Outlook or Google Drives
 
-Demo: https://bit.ly/3h1fG3k  \
-Download APK: https://bit.ly/3nuJkQP 
+Demo:   \
+Download APK: 
 
-# Paired Device
-A 2-piece PCB featuring high-speed ADCs, band-pass filters and Bluetooth/LoRA modules acts as the device to be mounted onto a drone. \
-<img src="/app/src/github/PCB_assembly.PNG" alt="ArduNet Banner" width="250px" height="auto">
-<img src="/app/src/github/SW_assembly.PNG" alt="ArduNet Banner" width="250px" height="auto">
 
-# Demo
 ## Collect and save Sensor Data using BLE
 Scan for devices | Pair Devices | Graph Data | Save to Drives
 --- | --- | --- | --- 
