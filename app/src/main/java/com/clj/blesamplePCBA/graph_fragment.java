@@ -10,9 +10,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.FileProvider;
+
 import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -54,6 +52,8 @@ import java.util.Random;
 import java.util.UUID;
 //SPINNER
 import androidx.annotation.RequiresApi;
+import androidx.core.content.FileProvider;
+import androidx.fragment.app.Fragment;
 
 public class graph_fragment extends Fragment implements View.OnClickListener {
 

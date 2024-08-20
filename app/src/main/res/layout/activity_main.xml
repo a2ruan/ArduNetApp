@@ -7,7 +7,7 @@
     android:animateLayoutChanges="true"
     android:orientation="vertical">
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
@@ -138,7 +138,7 @@
         android:text="@string/start_scan"
         android:textColor="@color/buttonText" />
 
-    <android.support.design.widget.BottomNavigationView
+    <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/nav_view"
         android:layout_width="match_parent"
         android:layout_height="60dp"
@@ -148,7 +148,7 @@
         android:background="#FFFFFF"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintVertical_bias="0.0"
-        app:menu="@menu/bottom_nav_menu"></android.support.design.widget.BottomNavigationView>
+        app:menu="@menu/bottom_nav_menu"></com.google.android.material.bottomnavigation.BottomNavigationView>
 
 
 </RelativeLayout>
