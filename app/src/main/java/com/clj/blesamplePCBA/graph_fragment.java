@@ -365,6 +365,9 @@ public class graph_fragment extends Fragment implements View.OnClickListener {
     }
 
     public void rescaleYAxis(LineChart lc) {
+        if (lc == null){
+            return;
+        }
         lc.getAxisLeft().setAxisMaximum(lc.getYMax()+lc.getYMax()-lc.getYMin());
         if (lc.getYMin() > 0) {
             lc.getAxisLeft().setAxisMinimum(lc.getYMin()-(lc.getYMax()-lc.getYMin()));
@@ -628,6 +631,10 @@ public class graph_fragment extends Fragment implements View.OnClickListener {
                     graphStatus = false;
                 }
                 else {
+                    if (chart2 == null){
+                        Toast.makeText(getActivity(), "No Chart Data to Record", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                     // EXIT RECORD
                     graphStatus = true;
                     startGraphing();
