@@ -21,14 +21,14 @@ Last update: 20-08-2024
 
 <img src="/app/src/github/Banner_v1.jpg" alt="ArduNet Banner" width="500px" height="auto">
 # ArduNet
-ArduNet is an android application designed to graph sensor data using BLE (bluetooth low-energy). This application was designed to work with the ESP 32 LoRa V2 microcontroller, but is also compatible with any device with a BLE chip capable of broadcasting.
+ArduNet is an Android application designed to graph sensor data using BLE (Bluetooth low-energy). This application was designed to work with the ESP 32 LoRa V2 microcontroller but is also compatible with any device with a BLE chip capable of broadcasting.
 \
-Graphing is done on a seperate multi-threaded process, enabling data recording in the background even when app is not in focus.
+Graphing is done on a separate multi-threaded process, enabling data recording in the background even when the app is not in focus.
 
 # Features
 * Scan for nearby Bluetooth devices
 * Record sensor data (x,y) into .csv format
-* Export .csv files to Gmail, Outlook or Google Drives
+* Export .csv files to Gmail, Outlook, or Google Drives
 
 Demo:   \
 Download APK: 
@@ -57,7 +57,7 @@ Set your Bluetooth device to transmit the packet under the following default ser
 * Characteristic UUID: `beb5483e-36e1-4688-b7f5-ea07361b26a8` 
 \
 For instructions on how to set up your Arduino to broadcast BLE:
-https://github.com/a2ruan/ESP32-Sensor-Array
+https://github.com/aeonSolutions/AeonLabs-ESP32-Sensor-Array
 
 ## Characteristic Packet Format
 Broadcast the BLE packet with the following packet format\
