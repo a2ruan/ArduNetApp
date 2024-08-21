@@ -1,16 +1,10 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 29
-    buildToolsVersion '26.0.2'
-    lintOptions{
-        disable 'MissingTranslation'
-    }
+    compileSdkVersion 34
     defaultConfig {
-        minSdkVersion 14
-        targetSdkVersion 29
-        versionCode 235
-        versionName "2.3.2"
+        minSdkVersion 19
+        targetSdkVersion 34
     }
     buildTypes {
         release {
@@ -18,8 +12,12 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    namespace 'com.clj.fastble'
+    lint {
+        disable 'MissingTranslation'
+    }
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    api fileTree(dir: 'libs', include: ['*.jar'])
 }
