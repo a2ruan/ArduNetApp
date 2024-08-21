@@ -20,8 +20,9 @@ Last update: 20-08-2024
 
 
 <img src="/app/src/github/Banner_v1.jpg" alt="ArduNet Banner" width="500px" height="auto">
-# ArduNet
-ArduNet is an Android application designed to graph sensor data using BLE (Bluetooth low-energy). This application was designed to work with the ESP 32 LoRa V2 microcontroller but is also compatible with any device with a BLE chip capable of broadcasting.
+
+# Smart Concrete  Android App
+The Smart Concrete App  is a fork of the [ArduNet App](), an Android application designed to graph sensor data using BLE (Bluetooth low-energy). This application was designed to work with the ESP 32 LoRa V2 microcontroller but is also compatible with any device with a BLE chip capable of broadcasting.
 \
 Graphing is done on a separate multi-threaded process, enabling data recording in the background even when the app is not in focus.
 
