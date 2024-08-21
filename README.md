@@ -23,6 +23,9 @@ The Smart Concrete App  is a fork of the [ArduNet App](https://github.com/a2ruan
 \
 Graphing is done on a separate multi-threaded process, enabling data recording in the background even when the app is not in focus.
 
+#### Requirements
+- Android SDK version 29 ( Android 10)
+
 # Features
 * Scan for nearby Bluetooth devices
 * Record sensor data (x,y) into .csv format
